@@ -1,0 +1,12 @@
+{
+  "name": "rw_tgbot",
+  "version": "1.0.0",
+  "description": "Telegram Bot for Robin Wong",
+  "main": "index.js",
+  "author": "Robin Wong",
+  "license": "WTFPL",
+  "private": true,
+  "dependencies": {
+    "node-telegram-bot-api": "^0.30.0"
+  }
+}
