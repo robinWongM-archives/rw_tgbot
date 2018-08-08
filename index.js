@@ -14,17 +14,22 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
   // of the message
 
   const chatId = msg.chat.id;
+  console.log(chatId)
   const resp = match[1]; // the captured "whatever"
 
   // send back the matched "whatever" to the chat
   bot.sendMessage(chatId, resp);
 });
 
-// Listen for any kind of message. There are different kinds of
-// messages.
-bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
+bot.onText(/\/chat (.+)/, (msg, match) => {
+    const chatId = msg.chat.id;
+    const resp = match[1]; // the captured "whatever"
 
-  // send a message to the chat acknowledging receipt of their message
-  bot.sendMessage(chatId, 'Received your message');
-});
+    try {
+        bot.getChat(resp).then((chat) => {
+            bot.sendMessage(chatId, chat.id)
+        })
+    } catch(err) {
+        console.error(err)
+    }
+})
