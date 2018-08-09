@@ -93,7 +93,7 @@ bot.on('message', msg => {
         if(ret.length > 1) {
             console.log('matched message', ret[1])
             let id = ret[1]
-            bot.sendMessage(chatId, '[H5](https://m.weibo.cn/status/' + id + ') / ' + 
+            bot.sendMessage(chatId, '点击打开微博：' + '[H5](https://m.weibo.cn/status/' + id + ') / ' + 
                                     '[APP](https://service.rwong.cc/tg_bot/weibo/' + id + ') / ' +
                                     '[Intl](https://service.rwong.cc/tg_bot/weico/' + id + ')',
                             {
