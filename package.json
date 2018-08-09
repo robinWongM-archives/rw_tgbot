@@ -7,6 +7,7 @@
   "license": "WTFPL",
   "private": true,
   "dependencies": {
-    "node-telegram-bot-api": "^0.30.0"
+    "node-telegram-bot-api": "^0.30.0",
+    "weibo-mid": "^0.0.1"
   }
 }

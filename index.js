@@ -1,5 +1,9 @@
-const TelegramBot = require('node-telegram-bot-api');
+const TelegramBot = require('node-telegram-bot-api'),
+      weiboMid = require('weibo-mid')
+
 const config = require('./config.js')
+const pWeiboCN = /weibo\.cn\/(?:status|detail)\/(\d+)/i
+const pWeiboCOM = /weibo\.com\/\d+\/(.+)/i
 
 // replace the value below with the Telegram token you receive from @BotFather
 const token = config.bot_token;
@@ -59,12 +63,6 @@ function returnWeibo(id) {
     }
 }
 
-bot.onText(/\/chat (.+)/, (msg, match) => {
-    const chatId = msg.chat.id;
-    
-    bot.sendMessage(chatId, chatId)
-})
-
 bot.onText(/\/weiboid (.+)/, (msg, match) => {
     const chatId = msg.chat.id
     const resp = match[1]
@@ -72,6 +70,26 @@ bot.onText(/\/weiboid (.+)/, (msg, match) => {
     bot.sendMessage(chatId, 'Try:', returnWeibo(resp))
 })
 
+bot.on('message', msg => {
+    const chatId = msg.chat.id
+    if(chatId != config.owner_id && chatId != config.exi_channel)
+        return
+
+    let text
+    if(msg.reply_to_message) {
+        text = msg.reply_to_message.text
+    } else {
+        text = msg.text
+    }
+
+    // match weibo
+    let ret = pWeiboCN.exec(text)
+    if(ret.length > 1) {
+        let id = ret[1]
+        bot.sendMessage(chatId, '点击链接调起微博 APP：', returnWeibo(id))
+    }
+    
+})
 
 
 setInterval(() => {
