@@ -34,14 +34,11 @@ function fetchCount() {
             channel.count = count
             if(channel.previousCount != 0 && channel.previousCount != count) {
                 // modified
-                let output = '#'+ channel.category + ' [' + channel.name + '](https://t.me/' + channel.id + '): '
-                if(channel.previousCount == count - 1) {
-                    // +1
-                    output = '#UpOne ' + output + count
-                } else if(channel.previousCount < count) {
-                    output = '#Up ' + output + channel.previousCount + ' → ' + count
+                let output = '#港股L2行情 #'+ channel.category + ' [' + channel.name + '](https://t.me/' + channel.id + ') '
+                if(channel.previousCount < count) {
+                    output = output + count + '🔺(' + (channel.count - channel.previousCount)
                 } else {
-                    output = '#Down ' + output + channel.previousCount + ' → ' + count
+                    output = output + count + '🔻(' + (channel.previousCount - channel.count)
                 }
                 bot.sendMessage(config.main_channel, output, {
                     disable_notification: true,
