@@ -14,6 +14,7 @@ const bot = new TelegramBot(token, {polling: true});
 let channels = []
 config.channels.forEach(category => {
     category.items.forEach(channel => {
+        console.log('@' + channel)
         bot.getChat('@' + channel).then(chat => {
             channels.push({
                 id: channel,
