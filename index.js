@@ -31,14 +31,14 @@ function fetchCount() {
             channel.count = count
             if(channel.previousCount != 0 && channel.previousCount != count) {
                 // modified
-                let output = '#分台订阅者人数 【[' + channel.name + '](tg://resolve?domain=' + channel.id + ')】'
-                if(channel.previousCount = count - 1) {
+                let output = '[【' + channel.name + '】](tg://resolve?domain=' + channel.id + '): ' + channel.previousCount + ' → ' + count
+                if(channel.previousCount == count - 1) {
                     // +1
-                    output = output + '➕1️⃣  ➡️' + count
+                    output = '#+1 ' + output
                 } else if(channel.previousCount < count) {
-                    output = output + '↗️ ' + channel.previousCount + '➡️' + count
+                    output = '#Up ' + output
                 } else {
-                    output = output + '↘️ ' + channel.previousCount + '➡️' + count
+                    output = '#Down ' + output
                 }
                 bot.sendMessage(config.main_channel, output, {
                     disable_notification: true,
