@@ -36,9 +36,9 @@ function fetchCount() {
                 // modified
                 let output = '#港股L2行情 #'+ channel.category + ' [' + channel.name + '](https://t.me/' + channel.id + ') '
                 if(channel.previousCount < count) {
-                    output = output + count + '🔺(' + (channel.count - channel.previousCount)
+                    output = output + count + '🔺(' + (channel.count - channel.previousCount) + ')'
                 } else {
-                    output = output + count + '🔻(' + (channel.previousCount - channel.count)
+                    output = output + count + '🔻(' + (channel.previousCount - channel.count) + ')'
                 }
                 bot.sendMessage(config.main_channel, output, {
                     disable_notification: true,
