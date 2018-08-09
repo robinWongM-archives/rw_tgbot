@@ -34,14 +34,14 @@ function fetchCount() {
             channel.count = count
             if(channel.previousCount != 0 && channel.previousCount != count) {
                 // modified
-                let output = '#'+ channel.category + '[' + channel.name + '](https://t.me/' + channel.id + '): ' + channel.previousCount + ' → ' + count
+                let output = '#'+ channel.category + ' [' + channel.name + '](https://t.me/' + channel.id + '): '
                 if(channel.previousCount == count - 1) {
                     // +1
-                    output = '#Up1 ' + output
+                    output = '#UpOne ' + output + count
                 } else if(channel.previousCount < count) {
-                    output = '#Up ' + output
+                    output = '#Up ' + output + channel.previousCount + ' → ' + count
                 } else {
-                    output = '#Down ' + output
+                    output = '#Down ' + output + channel.previousCount + ' → ' + count
                 }
                 bot.sendMessage(config.main_channel, output, {
                     disable_notification: true,
@@ -110,6 +110,7 @@ bot.on('message', msg => {
                                 parse_mode: 'Markdown',
                                 reply_to_message_id: msg.message_id,
                                 disable_notification: true,
+                                disable_web_page_preview: true,
                                 ...returnWeibo(id)
                             })
         }
