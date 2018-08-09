@@ -75,6 +75,8 @@ bot.on('message', msg => {
     if(chatId != config.owner_id && chatId != config.exi_channel)
         return
 
+    console.log('Received Message')
+
     let text
     if(msg.reply_to_message) {
         text = msg.reply_to_message.text
@@ -82,9 +84,12 @@ bot.on('message', msg => {
         text = msg.text
     }
 
+    console.log('message content:' + text)
+
     // match weibo
     let ret = pWeiboCN.exec(text)
     if(ret.length > 1) {
+        console.log('matched message', ret[1])
         let id = ret[1]
         bot.sendMessage(chatId, '点击链接调起微博 APP：', returnWeibo(id))
     }
