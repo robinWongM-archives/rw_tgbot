@@ -70,8 +70,25 @@ bot.onText(/\/weibo (.+)/, (msg, match) => {
     const chatId = msg.chat.id
     const resp = match[1]
 
-    bot.sendMessage(chatId, 'Try: [微博国际版打开](weibointernational://detail?weiboid=' + resp, {
-        parse_mode: 'Markdown'
+    bot.sendMessage(chatId, 'Try:', {
+        reply_markup: {
+            inline_keyboard: [
+                [
+                    {
+                        text: '微博 HTML5 版 打开',
+                        url: 'https://m.weibo.cn/status/' + resp
+                    },
+                    {
+                        text: '微博 APP 打开（通用）',
+                        url: 'https://service.rwong.cc/tg_bot/weibo/' + resp
+                    },
+                    {
+                        text: '微博国际版 打开',
+                        url: 'https://service.rwong.cc/tg_bot/weico/' + resp
+                    }
+                ]
+            ]
+        }
     })
 })
 
