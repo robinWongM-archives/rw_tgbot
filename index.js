@@ -46,18 +46,20 @@ function returnWeibo(id) {
     return {
         reply_markup: {
             inline_keyboard: [
-                [{
-                    text: '微博 HTML5 版 打开',
-                    url: 'https://m.weibo.cn/status/' + id
-                }],
-                [{
-                    text: '微博 APP 打开（通用）',
-                    url: 'https://service.rwong.cc/tg_bot/weibo/' + id
-                }],
-                [{
-                    text: '微博国际版 打开',
-                    url: 'https://service.rwong.cc/tg_bot/weico/' + id
-                }]
+                [
+                    {
+                        text: 'H5',
+                        url: 'https://m.weibo.cn/status/' + id
+                    },
+                    {
+                        text: '通用',
+                        url: 'https://service.rwong.cc/tg_bot/weibo/' + id
+                    },
+                    {
+                        text: 'Intl',
+                        url: 'https://service.rwong.cc/tg_bot/weico/' + id
+                    }
+                ]
             ]
         }
     }
