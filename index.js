@@ -86,20 +86,21 @@ bot.on('message', msg => {
         text = msg.text
     }
 
-    console.log('message content:' + text)
-
-    // match weibo
-    let ret = pWeiboCN.exec(text)
-    if(ret.length > 1) {
-        console.log('matched message', ret[1])
-        let id = ret[1]
-        bot.sendMessage(chatId, '[H5](https://m.weibo.cn/status/' + id + ') / ' + 
-                                '[APP](https://service.rwong.cc/tg_bot/weibo/' + id + ') / ' +
-                                '[Intl](https://service.rwong.cc/tg_bot/weico/' + id + ')',
-                        {
-                            parse_mode: 'Markdown',
-                            reply_to_message_id: msg.message_id
-                        })
+    if(msg.text) {
+        // match weibo for text message
+        console.log('message content:' + text)
+        let ret = pWeiboCN.exec(text)
+        if(ret.length > 1) {
+            console.log('matched message', ret[1])
+            let id = ret[1]
+            bot.sendMessage(chatId, '[H5](https://m.weibo.cn/status/' + id + ') / ' + 
+                                    '[APP](https://service.rwong.cc/tg_bot/weibo/' + id + ') / ' +
+                                    '[Intl](https://service.rwong.cc/tg_bot/weico/' + id + ')',
+                            {
+                                parse_mode: 'Markdown',
+                                reply_to_message_id: msg.message_id
+                            })
+        }
     }
 })
 
