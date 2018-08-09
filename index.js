@@ -31,10 +31,10 @@ function fetchCount() {
             channel.count = count
             if(channel.previousCount != 0 && channel.previousCount != count) {
                 // modified
-                let output = '#分台订阅者人数 【(' + channel.name + ')[tg://resolve?domain=' + channel.id + ']】'
+                let output = '#分台订阅者人数 【[' + channel.name + '](tg://resolve?domain=' + channel.id + ')】'
                 if(channel.previousCount = count - 1) {
                     // +1
-                    output = output + '➕1️⃣ ➡️' + count
+                    output = output + '➕1️⃣  ➡️' + count
                 } else if(channel.previousCount < count) {
                     output = output + '↗️ ' + channel.previousCount + '➡️' + count
                 } else {
