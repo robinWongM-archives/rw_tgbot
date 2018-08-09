@@ -73,10 +73,12 @@ bot.onText(/\/weibo (.+)/, (msg, match) => {
     bot.sendMessage(chatId, 'Try:', {
         reply_markup: {
             inline_keyboard: [
-                {
-                    text: '微博国际版 打开',
-                    url: 'weibointernation://detail?weiboid=' + resp
-                }
+                [
+                    {
+                        text: '微博国际版 打开',
+                        url: 'weibointernation://detail?weiboid=' + resp
+                    }
+                ]
             ]
         }
     })
