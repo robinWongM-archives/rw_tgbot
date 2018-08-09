@@ -12,13 +12,16 @@ const token = config.bot_token;
 const bot = new TelegramBot(token, {polling: true});
 
 let channels = []
-config.channels.forEach(channel => {
-    bot.getChat(channel).then(chat => {
-        channels.push({
-            id: channel,
-            name: chat.title,
-            previousCount: 0,
-            count: 0
+config.channels.forEach(category => {
+    category.items.forEach(channel => {
+        bot.getChat('@' + channel).then(chat => {
+            channels.push({
+                id: channel,
+                name: chat.title,
+                category: category.category,
+                previousCount: 0,
+                count: 0
+            })
         })
     })
 })
@@ -31,10 +34,10 @@ function fetchCount() {
             channel.count = count
             if(channel.previousCount != 0 && channel.previousCount != count) {
                 // modified
-                let output = '[【' + channel.name + '】](tg://resolve?domain=' + channel.id + '): ' + channel.previousCount + ' → ' + count
+                let output = '#'+ channel.category + '[' + channel.name + '](https://t.me/' + channel.id + '): ' + channel.previousCount + ' → ' + count
                 if(channel.previousCount == count - 1) {
                     // +1
-                    output = '#+1 ' + output
+                    output = '#Up1 ' + output
                 } else if(channel.previousCount < count) {
                     output = '#Up ' + output
                 } else {
