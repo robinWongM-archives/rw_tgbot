@@ -72,8 +72,8 @@ bot.onText(/\/weiboid (.+)/, (msg, match) => {
 
 bot.on('message', msg => {
     const chatId = msg.chat.id
-    if(chatId != config.owner_id && chatId != config.exi_channel)
-        return
+    /* if(chatId != config.owner_id && chatId != config.exi_channel)
+        return */
 
     console.log('Received Message')
 
