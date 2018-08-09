@@ -45,7 +45,8 @@ function fetchCount() {
                 }
                 bot.sendMessage(config.main_channel, output, {
                     disable_notification: true,
-                    parse_mode: 'Markdown'
+                    parse_mode: 'Markdown',
+                    disable_web_page_preview: true
                 })
             }
             channel.previousCount = count
@@ -110,7 +111,6 @@ bot.on('message', msg => {
                                 parse_mode: 'Markdown',
                                 reply_to_message_id: msg.message_id,
                                 disable_notification: true,
-                                disable_web_page_preview: true,
                                 ...returnWeibo(id)
                             })
         }
