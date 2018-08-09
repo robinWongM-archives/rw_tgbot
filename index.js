@@ -27,8 +27,10 @@ function fetchCount() {
             channel.count = count
             if(channel.previousCount != 0 && channel.previousCount != count) {
                 // modified
-                let output = '【' + channel.name + '】分台订阅者人数更新：' + channel.previousCount + ' → ' + channel.count
-                bot.sendMessage(config.main_channel, output)
+                let output = '#分台订阅者人数 【' + channel.name + '】' + channel.previousCount + ' → ' + channel.count
+                bot.sendMessage(config.main_channel, output, {
+                    disable_notification: true
+                })
             }
             channel.previousCount = count
             channels[i] = channel
@@ -64,6 +66,24 @@ bot.onText(/\/chat (.+)/, (msg, match) => {
     }
 })
 
+bot.onText(/\/weibo (.+)/, (msg, match) => {
+    const chatId = msg.chat.id
+    const resp = match[1]
+
+    bot.sendMessage(chatId, 'Try:', {
+        reply_markup: {
+            inline_keyboard: [
+                {
+                    text: '微博国际版 打开',
+                    url: 'weibointernation://detail?weiboid=' + resp
+                }
+            ]
+        }
+    })
+})
+
 setInterval(() => {
     fetchCount()
 }, 30000)
+
+fetchCount() // initialize
