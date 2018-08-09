@@ -48,15 +48,15 @@ function returnWeibo(id) {
             inline_keyboard: [
                 [
                     {
-                        text: 'H5',
+                        text: 'HTML5',
                         url: 'https://m.weibo.cn/status/' + id
                     },
                     {
-                        text: '通用',
+                        text: 'Official',
                         url: 'https://service.rwong.cc/tg_bot/weibo/' + id
                     },
                     {
-                        text: 'Intl',
+                        text: 'Intl.',
                         url: 'https://service.rwong.cc/tg_bot/weico/' + id
                     }
                 ]
@@ -93,12 +93,12 @@ bot.on('message', msg => {
         if(ret.length > 1) {
             console.log('matched message', ret[1])
             let id = ret[1]
-            bot.sendMessage(chatId, '点击打开微博：' + '[H5](https://m.weibo.cn/status/' + id + ') / ' + 
-                                    '[APP](https://service.rwong.cc/tg_bot/weibo/' + id + ') / ' +
-                                    '[Intl](https://service.rwong.cc/tg_bot/weico/' + id + ')',
+            bot.sendMessage(chatId, '今日最新闻，老友一齐滚来微博啦先',
                             {
                                 parse_mode: 'Markdown',
-                                reply_to_message_id: msg.message_id
+                                reply_to_message_id: msg.message_id,
+                                disable_notification: true,
+                                ...returnWeibo(id)
                             })
         }
     }
