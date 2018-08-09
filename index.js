@@ -70,7 +70,7 @@ bot.onText(/\/weibo (.+)/, (msg, match) => {
     const chatId = msg.chat.id
     const resp = match[1]
 
-    bot.sendMessage(chatId, 'Try: [微博国际版打开](weibointernation://detail?weiboid=' + resp, {
+    bot.sendMessage(chatId, 'Try: [微博国际版打开](weibointernational://detail?weiboid=' + resp, {
         parse_mode: 'Markdown'
     })
 })
