@@ -38,59 +38,41 @@ function fetchCount() {
     }
 }
 
-// Matches "/echo [whatever]"
-bot.onText(/\/echo (.+)/, (msg, match) => {
-  // 'msg' is the received Message from Telegram
-  // 'match' is the result of executing the regexp above on the text content
-  // of the message
-
-  const chatId = msg.chat.id;
-  if(chatId != config.owner_id) return
-  const resp = match[1]; // the captured "whatever"
-
-  // send back the matched "whatever" to the chat
-  bot.sendMessage(chatId, resp);
-});
+function returnWeibo(id) {
+    return {
+        reply_markup: {
+            inline_keyboard: [
+                [{
+                    text: '微博 HTML5 版 打开',
+                    url: 'https://m.weibo.cn/status/' + id
+                }],
+                [{
+                    text: '微博 APP 打开（通用）',
+                    url: 'https://service.rwong.cc/tg_bot/weibo/' + id
+                }],
+                [{
+                    text: '微博国际版 打开',
+                    url: 'https://service.rwong.cc/tg_bot/weico/' + id
+                }]
+            ]
+        }
+    }
+}
 
 bot.onText(/\/chat (.+)/, (msg, match) => {
     const chatId = msg.chat.id;
-    if(chatId != config.owner_id) return
-    const resp = match[1]; // the captured "whatever"
-
-    try {
-        bot.getChat(resp).then((chat) => {
-            bot.sendMessage(chatId, chat.id)
-        })
-    } catch(err) {
-        console.error(err)
-    }
+    
+    bot.sendMessage(chatId, chatId)
 })
 
-bot.onText(/\/weibo (.+)/, (msg, match) => {
+bot.onText(/\/weiboid (.+)/, (msg, match) => {
     const chatId = msg.chat.id
     const resp = match[1]
 
-    bot.sendMessage(chatId, 'Try:', {
-        reply_markup: {
-            inline_keyboard: [
-                [
-                    {
-                        text: '微博 HTML5 版 打开',
-                        url: 'https://m.weibo.cn/status/' + resp
-                    },
-                    {
-                        text: '微博 APP 打开（通用）',
-                        url: 'https://service.rwong.cc/tg_bot/weibo/' + resp
-                    },
-                    {
-                        text: '微博国际版 打开',
-                        url: 'https://service.rwong.cc/tg_bot/weico/' + resp
-                    }
-                ]
-            ]
-        }
-    })
+    bot.sendMessage(chatId, 'Try:', returnWeibo(resp))
 })
+
+
 
 setInterval(() => {
     fetchCount()
