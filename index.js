@@ -113,6 +113,10 @@ bot.on('message', msg => {
     }
 })
 
+bot.on('polling_error', error => {
+    console.log('Polling error:' + error.code)
+})
+
 
 setInterval(() => {
     fetchCount()
