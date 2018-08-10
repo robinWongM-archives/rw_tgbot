@@ -103,7 +103,7 @@ bot.on('message', msg => {
         let weiboCNRet = pWeiboCN.exec(text)
         console.log(weiboCNRet)
         if(weiboCNRet) {
-            console.log('matched message', ret[1])
+            console.log('matched message', weiboCNRet[1])
             let id = weiboCNRet[1]
             bot.sendMessage(chatId, '今日最新闻，老友一齐滚来微博啦先',
                             {
@@ -118,7 +118,7 @@ bot.on('message', msg => {
         console.log(weicoCCRet)
         console.log('here???')
         if(weicoCCRet) {
-            console.log('matched message', ret[1])
+            console.log('matched message', weicoCCRet[1])
             let id = weicoCCRet[1]
             bot.sendMessage(chatId, '今日最新闻，老友一齐滚来微博啦先',
                             {
