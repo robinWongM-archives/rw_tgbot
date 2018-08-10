@@ -3,6 +3,7 @@ const TelegramBot = require('node-telegram-bot-api'),
 
 const config = require('./config.js')
 const pWeiboCN = /weibo\.cn\/(?:status|detail)\/(\d+)/i
+const pWeicoCC = /weico\.cc\/share\/(?:\d+)\.html\?weibo_id=(\d+)/i
 const pWeiboCOM = /weibo\.com\/\d+\/(.+)/i
 
 // replace the value below with the Telegram token you receive from @BotFather
@@ -96,13 +97,29 @@ bot.on('message', msg => {
         text = msg.text
     }
 
-    if(msg.text) {
+    if(text) {
         // match weibo for text message
         console.log('message content:' + text)
-        let ret = pWeiboCN.exec(text)
-        if(ret.length > 1) {
+        let weiboCNRet = pWeiboCN.exec(text)
+        console.log(weiboCNRet)
+        if(weiboCNRet.length > 1) {
             console.log('matched message', ret[1])
-            let id = ret[1]
+            let id = weiboCNRet[1]
+            bot.sendMessage(chatId, '今日最新闻，老友一齐滚来微博啦先',
+                            {
+                                parse_mode: 'Markdown',
+                                reply_to_message_id: msg.message_id,
+                                disable_notification: true,
+                                ...returnWeibo(id)
+                            })
+        }
+
+        let weicoCCRet = pWeicoCC.exec(text)
+        console.log(weicoCCRet)
+        console.log('here???')
+        if(weicoCCRet.length > 1) {
+            console.log('matched message', ret[1])
+            let id = weicoCCRet[1]
             bot.sendMessage(chatId, '今日最新闻，老友一齐滚来微博啦先',
                             {
                                 parse_mode: 'Markdown',
