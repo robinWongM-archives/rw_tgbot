@@ -5,6 +5,8 @@ async function fetchLatest(bot, chatId) {
     try {
         // NOW News Local
         let nowNews = await got('https://news.now.com/api/getNewsListv2?category=119&pageSize=10&pageNo=1').body
+
+        bot.sendMessage(chatId, nowNews)
         let nowNewsJSON = JSON.parse(nowNews)
 
         // RTHK News Local
