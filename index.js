@@ -85,6 +85,10 @@ async function fetchLatest() {
         let nowNews = (await got('https://news.now.com/api/getNewsListv2?category=119&pageSize=10&pageNo=1')).body
         let nowNewsJSON = JSON.parse(nowNews)
 
+        // NOW News International
+        let nowNewsInternational = (await got('https://news.now.com/api/getNewsListv2?category=119&pageSize=10&pageNo=1')).body
+        let nowNewsInternationalJSON = JSON.parse(nowNews)
+
         // RTHK News Local
         let rthk = (await got('http://news.rthk.hk/rthk/webpageCache/services/loadModNewsShowSp2List.php?lang=zh-TW&cat=3&newsCount=60&dayShiftMode=1&archive_date=')).body
         let $rthk = cheerio.load(rthk)
@@ -92,9 +96,9 @@ async function fetchLatest() {
 
         $rthk('.ns2-inner').each(function(i, elem) {
             rthkList.push({
-                title: $rthk(elem).children('.ns2-title a').text(),
-                link: $rthk(elem).children('.ns2-title a').attr('href'),
-                time: $rthk(elem).children('.ns2-created').text()
+                title: $rthk(this).children('.ns2-title a').text(),
+                link: $rthk(this).children('.ns2-title a').attr('href'),
+                time: $rthk(this).children('.ns2-created').text()
             })
         })
 
@@ -106,11 +110,19 @@ async function fetchLatest() {
             output = output + '[' + news.title + '](https://news.now.com/home/local/player?newsId=' + news.newsId + ') ' + new Date(news.publishDate).toISOString().slice(11, 19) + '\n'
         }
 
+        output = output + '**NOW News International** \n'
+
+        for (let i = 0; i < 5; i++) {
+            const news = nowNewsInternationalJSON[i]
+            output = output + '[' + news.title + '](https://news.now.com/home/international/player?newsId=' + news.newsId + ') ' + new Date(news.publishDate).toISOString().slice(11, 19) + '\n'
+        }
+
         output = output + '**RTHK** \n'
 
         for (let j = 0; j < 5; j++) {
             const news = rthkList[j]
-            output = output + '[' + news.title + '](https://news.now.com/home/local/player?newsId=' + news.newsId + ') ' + news.time.slice(15, 20) + '\n'
+            console.log(news)
+            output = output + '[' + news.title + '](' + news.link + ') ' + news.time.slice(15, 20) + '\n'
         }
 
         bot.sendMessage('@the_BetaNews', output, {
