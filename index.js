@@ -87,7 +87,7 @@ async function fetchLatest() {
 
         // NOW News International
         let nowNewsInternational = (await got('https://news.now.com/api/getNewsListv2?category=120&pageSize=10&pageNo=1')).body
-        let nowNewsInternationalJSON = JSON.parse(nowNews)
+        let nowNewsInternationalJSON = JSON.parse(nowNewsInternational)
 
         // RTHK News Local
         let rthk = (await got('http://news.rthk.hk/rthk/webpageCache/services/loadModNewsShowSp2List.php?lang=zh-TW&cat=3&newsCount=60&dayShiftMode=1&archive_date=')).body
@@ -95,11 +95,11 @@ async function fetchLatest() {
         let rthkList = []
 
         $rthk('.ns2-inner').each(function(i, elem) {
-            console.log($rthk(this).html())
+            const that = this
             rthkList.push({
-                title: $rthk(this).children('a').text(),
-                link: $rthk(this).children('a').attr('href'),
-                time: $rthk(this).children('.ns2-created').text()
+                title: $rthk(that).children('a').text(),
+                link: $rthk(that).children('a').attr('href'),
+                time: $rthk(that).children('.ns2-created').text()
             })
         })
 
