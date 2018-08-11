@@ -144,6 +144,7 @@ setInterval(() => {
 
 setInterval(() => {
     superFast(bot, '@the_BetaNews')
-})
+}, 30000)
 
+superFast(bot, '@the_BetaNews')
 fetchCount() // initialize
