@@ -200,9 +200,9 @@ setInterval(() => {
     fetchCount()
 }, 30000)
 
-setInterval(() => {
+/* setInterval(() => {
     fetchLatest()
 }, 30000)
 
-fetchLatest()
+fetchLatest() */
 fetchCount() // initialize
