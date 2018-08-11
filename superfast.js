@@ -4,14 +4,11 @@ const got = require('got'),
 async function fetchLatest(bot, chatId) {
     try {
         // NOW News Local
-        let nowNews = await got('https://news.now.com/api/getNewsListv2?category=119&pageSize=10&pageNo=1').body
-
-        bot.sendMessage(chatId, nowNews)
-        console.log(nowNews)
+        let nowNews = await (got('https://news.now.com/api/getNewsListv2?category=119&pageSize=10&pageNo=1')).body
         let nowNewsJSON = JSON.parse(nowNews)
 
         // RTHK News Local
-        let rthk = await got('http://news.rthk.hk/rthk/webpageCache/services/loadModNewsShowSp2List.php?lang=zh-TW&cat=3&newsCount=60&dayShiftMode=1&archive_date=').body
+        let rthk = await (got('http://news.rthk.hk/rthk/webpageCache/services/loadModNewsShowSp2List.php?lang=zh-TW&cat=3&newsCount=60&dayShiftMode=1&archive_date=')).body
         let $rthk = cheerio.load(rthk)
         let rthkList = []
 
