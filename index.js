@@ -127,7 +127,8 @@ async function fetchLatest() {
 
         bot.sendMessage('@the_BetaNews', output, {
             parse_mode: 'Markdown',
-            disable_notification: true
+            disable_notification: true,
+            disable_web_page_preview: true
         })
 
     } catch (err) {
