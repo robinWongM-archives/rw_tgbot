@@ -6,6 +6,8 @@ const pWeiboCN = /weibo\.cn\/(?:status|detail)\/(\d+)/i
 const pWeicoCC = /weico\.cc\/share\/(?:\d+)\.html\?weibo_id=(\d+)/i
 const pWeiboCOM = /weibo\.com\/\d+\/(.+)/i
 
+const superFast = require('./superfast.js')
+
 // replace the value below with the Telegram token you receive from @BotFather
 const token = config.bot_token;
 
@@ -139,5 +141,9 @@ bot.on('polling_error', error => {
 setInterval(() => {
     fetchCount()
 }, 30000)
+
+setInterval(() => {
+    superFast(bot, '@the_BetaNews')
+})
 
 fetchCount() // initialize
