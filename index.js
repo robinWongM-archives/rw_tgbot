@@ -113,13 +113,13 @@ async function fetchLatest() {
             output = output + '[' + news.title + '](https://news.now.com/home/local/player?newsId=' + news.newsId + ') ' + news.time.slice(15, 20) + '\n'
         }
 
-        bot.sendMessage(chatId, output, {
+        bot.sendMessage('@the_BetaNews', output, {
             parse_mode: 'Markdown',
             disable_notification: true
         })
 
     } catch (err) {
-        bot.sendMessage(chatId, '#错误 获取最新新闻时出现问题，错误详情：' + err)
+        bot.sendMessage('@the_BetaNews', '#错误 获取最新新闻时出现问题，错误详情：' + err)
     }
 }
 
