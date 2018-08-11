@@ -92,9 +92,9 @@ async function fetchLatest() {
 
         $rthk('.ns2-inner').each(function(i, elem) {
             rthkList.push({
-                title: elem.children('.ns2-title a').text(),
-                link: elem.children('.ns2-title a').attr('href'),
-                time: elem.children('.ns2-created').text()
+                title: $rthk(elem).children('.ns2-title a').text(),
+                link: $rthk(elem).children('.ns2-title a').attr('href'),
+                time: $rthk(elem).children('.ns2-created').text()
             })
         })
 
