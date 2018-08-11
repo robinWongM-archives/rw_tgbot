@@ -95,30 +95,29 @@ async function fetchLatest() {
         let rthkList = []
 
         $rthk('.ns2-inner').each(function(i, elem) {
-            const that = this
             rthkList.push({
-                title: $rthk(that).children('a').text(),
-                link: $rthk(that).children('a').attr('href'),
-                time: $rthk(that).children('.ns2-created').text()
+                title: $rthk('a', elem).text(),
+                link: $rthk('a', elem).attr('href'),
+                time: $rthk('.ns2-created', elem).text()
             })
         })
 
         let output = '#港闻测试 ' + new Date().toISOString().slice(11, 19) + '\n' +
-                     '**NOW News** \n'
+                     '\n*NOW News* \n'
 
         for (let i = 0; i < 5; i++) {
             const news = nowNewsJSON[i]
             output = output + '[' + news.title + '](https://news.now.com/home/local/player?newsId=' + news.newsId + ') ' + new Date(news.publishDate).toISOString().slice(11, 19) + '\n'
         }
 
-        output = output + '**NOW News International** \n'
+        output = output + '\n*NOW News International* \n'
 
         for (let i = 0; i < 5; i++) {
             const news = nowNewsInternationalJSON[i]
             output = output + '[' + news.title + '](https://news.now.com/home/international/player?newsId=' + news.newsId + ') ' + new Date(news.publishDate).toISOString().slice(11, 19) + '\n'
         }
 
-        output = output + '**RTHK** \n'
+        output = output + '\n*RTHK* \n'
 
         for (let j = 0; j < 5; j++) {
             const news = rthkList[j]
