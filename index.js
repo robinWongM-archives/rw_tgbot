@@ -95,7 +95,7 @@ async function init() {
 async function fetchCount() {
     for (let i = 0; i < channels.length; i++) {
         let channel = channels[i]
-        bot.getChatMembersCount('@' + channel.id).then(count => {
+        bot.getChatMembersCount('@' + channel.id).then(async count => {
             channel.count = count
             if(channel.previousCount != 0 && channel.previousCount != count) {
                 // modified
