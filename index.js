@@ -113,7 +113,7 @@ async function init() {
     //}
 
     // setting up scheduled job
-    let updateJob = schedule.scheduleJob('*/20 * * * *', async () => {
+    let updateJob = schedule.scheduleJob('*/20 * * * * *', async () => {
         fetchCount()
     })
     
