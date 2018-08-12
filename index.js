@@ -120,7 +120,7 @@ async function init() {
     
     let reportJob = schedule.scheduleJob('10 * * * * *', async () => {
         let nowTime = moment()
-        console.log('[' + nowTime().tz('Asia/Shanghai').format('YYYY/MM/DD HH:mm:ss') + '] Running 速报')
+        console.log('[' + moment().tz('Asia/Shanghai').format('YYYY/MM/DD HH:mm:ss') + '] Running 速报')
 
         output = ''
         preList = {}
