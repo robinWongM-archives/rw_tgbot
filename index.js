@@ -79,6 +79,7 @@ async function init() {
                                              'WHERE channel = ' + channel.id + ' ' + 
                                              'LIMIT 1' +
                                              'ORDER BY time DESC')
+                console.log('init', channelRow)
                 if(channelRow.length) {
                     channels[i].previousCount = channels[i].count = channelRow[0].count
                 }
@@ -100,12 +101,14 @@ async function fetchCount() {
             if(channel.previousCount != count) {
                 // save db
                 try {
+                    console.log('trying to save ' + channel.id)
                     await query('INSERT INTO news_stat SET ?', {
                         time: new Date(),
                         channel: channel.id,
                         count: count
                     })
                 } catch (err) {
+                    console.error('saving error:' + err)
                     bot.sendMessage(config.main_channel, '#数据库错误 ' + err, {
                         disable_notification: true,
                         parse_mode: 'Markdown',
@@ -271,7 +274,7 @@ bot.on('polling_error', error => {
 
 setInterval(() => {
     fetchCount()
-}, 30000)
+}, 10000)
 
 /* setInterval(() => {
     fetchLatest()
