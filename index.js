@@ -304,9 +304,9 @@ let job = schedule.scheduleJob('* * * * *', async () => {
         
         if(ret.count < channel.count) {
             // Up
-            output = output + '*上涨 ' + (Math.round((channel.count - ret.count) * 100)/ ret.count ) + '% (' + (channel.count - ret.count) + '.00)*'
+            output = output + '*上涨 ' + (Math.round((channel.count - ret.count) / ret.count * 100) / 100) + '% (' + (channel.count - ret.count) + '.00)*'
         } else if(ret.count > channel.count) {
-            output = output + '*下跌 ' + (Math.round((ret.count - channel.count) * 100) / ret.count ) + '% (' + (ret.count - channel.count) + '.00)*'
+            output = output + '*下跌 ' + (Math.round((ret.count - channel.count) / ret.count * 100) / 100) + '% (' + (ret.count - channel.count) + '.00)*'
         } else {
             output = output + '平盘 0.00% (0.00)'
         }
