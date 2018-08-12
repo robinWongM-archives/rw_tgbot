@@ -114,12 +114,12 @@ async function init() {
 
     // setting up scheduled job
     let updateJob = schedule.scheduleJob('*/20 * * * * *', async () => {
-        console.log('Running Fetching')
+        console.log('[' + moment().format() + '] Running Fetching')
         fetchCount()
     })
     
     let reportJob = schedule.scheduleJob('10 0 * * * *', async () => {
-        console.log('Running 速报')
+        console.log('[' + moment().format() + '] Running 速报')
         output = "#港股小时速报 *当前时间：" + moment().tz('Asia/Shanghai').format('LTS') + '*'
     
         for (const channel of channels) {
