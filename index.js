@@ -76,7 +76,7 @@ async function init() {
             const channel = channels[i]
 
             let channelRow = await query('SELECT * FROM news_stat ' +
-                                            'WHERE channel = ' + channel.id + ' ' + 
+                                            'WHERE channel = ' + mysql.escape(channel.id) + ' ' + 
                                             'LIMIT 1' +
                                             'ORDER BY time DESC')
             console.log(channelRow)
