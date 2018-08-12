@@ -114,13 +114,13 @@ async function init() {
 
     // setting up scheduled job
     let updateJob = schedule.scheduleJob('*/20 * * * * *', async () => {
-        console.log('[' + moment().format() + '] Running Fetching')
+        console.log('[' + moment().tz('Asia/Shanghai').format('YYYY/MM/DD HH:mm:ss') + '] Running Fetching')
         fetchCount()
     })
     
-    let reportJob = schedule.scheduleJob('10 0 * * * *', async () => {
+    let reportJob = schedule.scheduleJob('10 */6 * * * *', async () => {
         let nowTime = moment()
-        console.log('[' + moment().format() + '] Running 速报')
+        console.log('[' + moment().tz('Asia/Shanghai').format('YYYY/MM/DD HH:mm:ss') + '] Running 速报')
 
         output = ''
         preList = {}
