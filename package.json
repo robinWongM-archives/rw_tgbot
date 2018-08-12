@@ -9,6 +9,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "got": "^9.0.0",
+    "mysql": "^2.16.0",
     "node-telegram-bot-api": "^0.30.0",
     "weibo-mid": "^0.0.1"
   }

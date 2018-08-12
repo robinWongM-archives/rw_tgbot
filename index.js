@@ -9,6 +9,35 @@ const pWeiboCOM = /weibo\.com\/\d+\/(.+)/i
 const got = require('got'),
       cheerio = require('cheerio')
 
+const mysql = require('mysql')
+const pool = mysql.createPool({
+    host     :  '127.0.0.1',
+    user     :  'news_media',
+    password :  config.mysql_token,
+    database :  'news_media'
+})
+
+const query = function( sql, values ) {
+    // 返回一个 Promise
+    return new Promise(( resolve, reject ) => {
+      pool.getConnection(function(err, connection) {
+        if (err) {
+          reject( err )
+        } else {
+          connection.query(sql, values, ( err, rows) => {
+            if ( err ) {
+              reject( err )
+            } else {
+              resolve( rows )
+            }
+            // 结束会话
+            connection.release()
+          })
+        }
+      })
+    })
+  }
+
 // replace the value below with the Telegram token you receive from @BotFather
 const token = config.bot_token;
 
@@ -30,8 +59,40 @@ config.channels.forEach(category => {
     })
 })
 
-// not ready to preserve the data - only for testing
-function fetchCount() {
+async function init() {
+    // Read from database
+    try {
+        let ret = await query('CREATE TABLE IF NOT EXISTS news_stat ( ' +
+                              'id INT UNSIGNED AUTO_INCREMENT, ' +
+                              'time DATETIME NOT NULL, ' +
+                              'channel VARCHAR(128) NOT NULL, ' +
+                              'count INT UNSIGNED NOT NULL, ' +
+                              'PRIMARY KEY (id)' +
+                              ') ENGINE=innoDB CHARSET=utf8')
+        
+        if(ret) {
+            //let latest = await query('SELECT * FROM news_stat')
+            for (let i = 0; i < channels.length; i++) {
+                const channel = channels[i]
+    
+                let channelRow = await query('SELECT * FROM news_stat ' +
+                                             'WHERE channel = ' + channel.id +
+                                             'LIMIT 1' +
+                                             'ORDER BY time DESC')
+                if(channelRow.length) {
+                    channels[i].previousCount = channels[i].count = channelRow.count
+                }
+            }
+        }
+
+        // and then fetch the latets count
+        fetchCount()
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+async function fetchCount() {
     for (let i = 0; i < channels.length; i++) {
         let channel = channels[i]
         bot.getChatMembersCount('@' + channel.id).then(count => {
@@ -49,6 +110,20 @@ function fetchCount() {
                     parse_mode: 'Markdown',
                     disable_web_page_preview: true
                 })
+                // save db
+                try {
+                    await query('INSERT INTO news_stat SET ?', {
+                        time: new Date(),
+                        channel: channel.id,
+                        count: count
+                    })
+                } catch (err) {
+                    bot.sendMessage(config.main_channel, '#数据库错误 ' + err, {
+                        disable_notification: true,
+                        parse_mode: 'Markdown',
+                        disable_web_page_preview: true
+                    })
+                }
             }
             channel.previousCount = count
             channels[i] = channel
@@ -121,7 +196,6 @@ async function fetchLatest() {
 
         for (let j = 0; j < 5; j++) {
             const news = rthkList[j]
-            console.log(news)
             output = output + '[' + news.title + '](' + news.link + ') ' + news.time.slice(15, 20) + '\n'
         }
 
@@ -161,7 +235,6 @@ bot.on('message', msg => {
         // match weibo for text message
         console.log('message content:' + text)
         let weiboCNRet = pWeiboCN.exec(text)
-        console.log(weiboCNRet)
         if(weiboCNRet) {
             console.log('matched message', weiboCNRet[1])
             let id = weiboCNRet[1]
@@ -175,8 +248,6 @@ bot.on('message', msg => {
         }
 
         let weicoCCRet = pWeicoCC.exec(text)
-        console.log(weicoCCRet)
-        console.log('here???')
         if(weicoCCRet) {
             console.log('matched message', weicoCCRet[1])
             let id = weicoCCRet[1]
