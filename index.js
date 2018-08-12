@@ -282,7 +282,7 @@ setInterval(() => {
 }, 30000)
 
 fetchLatest() */
-let job = schedule.scheduledJobs('* * * * *', () => {
+let job = schedule.scheduleJobs('* * * * *', () => {
     console.log('Running 一分钟速报')
     output = "#港股一分钟速报 *当前时间：" + moment().tz('Asia/Shanghai').format('LTS') + '*'
 
