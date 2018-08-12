@@ -282,6 +282,27 @@ setInterval(() => {
 }, 30000)
 
 fetchLatest() */
+
+// Thanks to https://stackoverflow.com/a/21323330
+function round(value, exp) {
+    if (typeof exp === 'undefined' || +exp === 0)
+      return Math.round(value);
+  
+    value = +value;
+    exp = +exp;
+  
+    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0))
+      return NaN;
+  
+    // Shift
+    value = value.toString().split('e');
+    value = Math.round(+(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp)));
+  
+    // Shift back
+    value = value.toString().split('e');
+    return +(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp));
+  }
+
 let job = schedule.scheduleJob('* * * * *', async () => {
     console.log('Running 一分钟速报')
     output = "#港股一分钟速报 *当前时间：" + moment().tz('Asia/Shanghai').format('LTS') + '*'
@@ -304,9 +325,9 @@ let job = schedule.scheduleJob('* * * * *', async () => {
         
         if(ret.count < channel.count) {
             // Up
-            output = output + '*上涨 ' + (Math.round((channel.count - ret.count) / ret.count * 100) / 100) + '% (' + (channel.count - ret.count) + '.00)*'
+            output = output + '*上涨 ' + (round((channel.count - ret.count) / ret.count * 100).toFixed(3)) + '% (' + (channel.count - ret.count) + '.00)*'
         } else if(ret.count > channel.count) {
-            output = output + '*下跌 ' + (Math.round((ret.count - channel.count) / ret.count * 100) / 100) + '% (' + (ret.count - channel.count) + '.00)*'
+            output = output + '*下跌 ' + (round((ret.count - channel.count) / ret.count * 100).toFixed(3)) + '% (' + (ret.count - channel.count) + '.00)*'
         } else {
             output = output + '平盘 0.00% (0.00)'
         }
