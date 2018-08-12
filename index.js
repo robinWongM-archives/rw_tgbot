@@ -187,7 +187,7 @@ async function init() {
                                           'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
                                           'AND time <= ' + mysql.escape(moment().subtract('6', 'hours').format("YYYY-MM-DD HH:mm:ss")) + 
                                           'ORDER BY time DESC LIMIT 1')
-                    if(!ret) {
+                    if(ret.length <= 0) {
                         ret = await query('SELECT count FROM news_stat ' +
                                           'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
                                           'ORDER BY time LIMIT 1')
