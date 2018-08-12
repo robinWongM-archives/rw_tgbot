@@ -119,34 +119,130 @@ async function init() {
     })
     
     let reportJob = schedule.scheduleJob('10 0 * * * *', async () => {
+        let nowTime = moment()
         console.log('[' + moment().format() + '] Running 速报')
-        output = "#港股小时速报 *当前时间：" + moment().tz('Asia/Shanghai').format('LTS') + '*'
-    
-        for (const channel of channels) {
-            let ret = await query('SELECT count FROM news_stat ' +
-                            'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
-                                  'AND time <= ' + mysql.escape(moment().subtract('1', 'hours').format("YYYY-MM-DD HH:mm:ss")) + 
-                                  'ORDER BY time DESC LIMIT 1')
-            if(!ret) {
-                ret = await query('SELECT count FROM news_stat ' +
-                      'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
-                      'ORDER BY time LIMIT 1')
-            }
-            ret = ret[0]
-            console.log('query ret: ' + ret.count + ' ')
-    
-            output = output + '\n'
-                     +  '[' + channel.name + '](https://t.me/' + channel.id + ') 报 ' + channel.count + ' 点，'
-            
-            if(ret.count < channel.count) {
-                // Up
-                output = output + '*上涨 ' + (round(((channel.count - ret.count) / ret.count) * 100).toFixed(2)) + '% (' + (channel.count - ret.count) + '.00)*'
-            } else if(ret.count > channel.count) {
-                output = output + '*下跌 ' + (round(((ret.count - channel.count) / ret.count) * 100).toFixed(2)) + '% (' + (ret.count - channel.count) + '.00)*'
-            } else {
-                output = output + '平盘 0.00% (0.00)'
+
+        output = ''
+        preList = {}
+
+        channels.forEach(channel => {
+            if(!preList[channel.category])
+                preList[channel.category] = []
+
+            preList[channel.category].push(channel)
+        })
+
+        switch (nowTime.hour()) {
+            case 0:
+                output = output + '#港股盘后报道'
+                break
+            case 6:
+                output = output + '#港股盘前报道'
+                break
+            case 12:
+                output = output + '#港股午市报道'
+                break
+            case 18:
+                output = output + '#港股收市报道'
+                break
+        }
+
+        output = " *" + moment().tz('Asia/Shanghai').format('YYYY/MM/DD [HKT] HH:mm') + '*\n'
+
+        switch (nowTime.hour()) {
+            case 0:
+                output = output + '截止市场夜宵时间，'
+                break
+            case 6:
+                output = output + '截止市场通宵时分，'
+                break
+            case 12:
+                output = output + '截止上午收盘，'
+                break
+            case 18:
+                output = output + '截止下午收盘，'
+                break
+        }
+
+        let allSum = {
+            previous: 0,
+            current: 0
+        }
+
+        for (const key in preList) {
+            if (preList.hasOwnProperty(key)) {
+                let list = preList[key]
+                let listSum = {
+                    previous: 0,
+                    current: 0
+                }
+                list.forEach((channel, i, arr) => {
+                    let ret = await query('SELECT count FROM news_stat ' +
+                                          'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
+                                          'AND time <= ' + mysql.escape(moment().subtract('1', 'hours').format("YYYY-MM-DD HH:mm:ss")) + 
+                                          'ORDER BY time DESC LIMIT 1')
+                    if(!ret) {
+                        ret = await query('SELECT count FROM news_stat ' +
+                                          'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
+                                          'ORDER BY time LIMIT 1')
+                    }
+
+                    arr[i].previousCount = ret[0].count
+                    listSum.previous += ret[0].count
+                    listSum.current += channel.count
+                })
+                preList[key].sum = listSum
+                allSum.previous += listSum.previous
+                allSum.current += listSum.current
             }
         }
+
+        output = output + '港股综合指数报 ' + allSum.current + ' 点，'
+
+        if(allSum.previous < allSum.current) {
+            // Up
+            output = output + '*上涨 ' + (round(((allSum.current - allSum.previous) / allSum.previous) * 100, 2).toFixed(2)) + '% (' + (allSum.current - allSum.previous) + '.00)*'
+        } else if(ret.count > channel.count) {
+            output = output + '*下跌 ' + (round(((allSum.previous - allSum.current) / allSum.previous) * 100, 2).toFixed(2)) + '% (' + (allSum.current - allSum.previous) + '.00)*'
+        } else {
+            output = output + '平盘 0.00% (0.00)'
+        }
+
+        output = output + '。再来看各个板块的情况：\n'
+
+        for (const key in preList) {
+            if (preList.hasOwnProperty(key)) {
+                let list = preList[key]
+                output = output + '\n#' + key + ' 板块报 ' + list.sum.current + '点，'
+                if(list.sum.previous < list.sum.current) {
+                    // Up
+                    output = output + '*上涨 ' + (round(((list.sum.current - list.sum.previous) / list.sum.previous) * 100, 2).toFixed(2)) + '% (' + (list.sum.current - list.sum.previous) + '.00)*'
+                } else if(ret.count > channel.count) {
+                    output = output + '*下跌 ' + (round(((list.sum.previous - list.sum.current) / list.sum.previous) * 100, 2).toFixed(2)) + '% (' + (list.sum.current - list.sum.previous) + '.00)*'
+                } else {
+                    output = output + '平盘 0.00% (0.00)'
+                }
+
+                output = output + '\n其中，'
+
+                list.forEach(channel => {
+                    output = output + '[' + channel.name + '](https://t.me/' + channel.id + ') 报 ' + channel.count + ' 点，'
+                    
+                    if(channel.previousCount < channel.count) {
+                        // Up
+                        output = output + '*上涨 ' + (round(((channel.count - channel.previousCount) / channel.previousCount) * 100, 2).toFixed(2)) + '% (' + (channel.count - channel.previousCount) + '.00)*'
+                    } else if(ret.count > channel.count) {
+                        output = output + '*下跌 ' + (round(((channel.previousCount - channel.count) / channel.previousCount) * 100, 2).toFixed(2)) + '% (' + (channel.previousCount - channel.count) + '.00)*'
+                    } else {
+                        output = output + '平盘 0.00% (0.00)'
+                    }
+
+                    output = output + '\n'
+                })
+            }
+        }
+
+        output = output + '\n本报道由上海商业银行特约播出'
     
         bot.sendMessage(config.main_channel, output, {
             parse_mode: 'Markdown',
