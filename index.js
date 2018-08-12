@@ -165,10 +165,10 @@ async function init() {
                 output = output + '截止市场通宵时分，'
                 break
             case 14:
-                output = output + '截止上午收盘，'
+                output = output + '截止午间收盘，'
                 break
             case 20:
-                output = output + '截止下午收盘，'
+                output = output + '截止本日收盘，'
                 break
             default:
                 output = output + '截止本次抽风，'
