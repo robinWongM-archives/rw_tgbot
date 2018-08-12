@@ -118,10 +118,15 @@ async function init() {
         fetchCount()
     })
     
-    let reportJob = schedule.scheduleJob('10 * * * * *', async () => {
+    let reportJob = schedule.scheduleJob('10 0 * * * *', async () => {
         let nowTime = moment().tz('Asia/Shanghai')
         console.log('[' + nowTime.format('YYYY/MM/DD HH:mm:ss') + '] Running 速报')
 
+        if(nowTime.hour() != 2 && nowTime.hour() != 8 && nowTime.hour() != 14 && nowTime.hour() != 20)
+            return
+
+        console.log('[' + nowTime.format('YYYY/MM/DD HH:mm:ss') + '] Running 速报到点咗')
+        
         output = ''
         preList = {}
 
@@ -133,16 +138,16 @@ async function init() {
         })
 
         switch (nowTime.hour()) {
-            case 0:
+            case 2:
                 output = output + '#港股盘后报道'
                 break
-            case 6:
+            case 8:
                 output = output + '#港股盘前报道'
                 break
-            case 12:
+            case 14:
                 output = output + '#港股午市报道'
                 break
-            case 18:
+            case 20:
                 output = output + '#港股收市报道'
                 break
             default:
@@ -153,16 +158,16 @@ async function init() {
                           nowTime.add(6, 'hours').format('HH:mm')  + '*\n'
 
         switch (nowTime.hour()) {
-            case 0:
+            case 2:
                 output = output + '截止市场夜宵时间，'
                 break
-            case 6:
+            case 8:
                 output = output + '截止市场通宵时分，'
                 break
-            case 12:
+            case 14:
                 output = output + '截止上午收盘，'
                 break
-            case 18:
+            case 20:
                 output = output + '截止下午收盘，'
                 break
             default:
@@ -251,7 +256,7 @@ async function init() {
 
         output = output + '\n本报道由上海商业银行特约播出'
     
-        bot.sendMessage('@the_BetaNews', output, {
+        bot.sendMessage(config.main_channel, output, {
             parse_mode: 'Markdown',
             disable_notification: true,
             disable_web_page_preview: true
