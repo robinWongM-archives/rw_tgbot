@@ -112,8 +112,11 @@ async function init() {
     //    console.error(err)
     //}
 
+    console.log('fetched')
+
     // setting up scheduled job
     let updateJob = schedule.scheduleJob('*/20 * * * * *', async () => {
+        console.log('Running Fetching')
         fetchCount()
     })
     
@@ -159,44 +162,47 @@ async function init() {
 async function fetchCount() {
     for (let i = 0; i < channels.length; i++) {
         let channel = channels[i]
-        bot.getChatMembersCount('@' + channel.id).then(async count => {
-            channel.count = count
-            if(channel.previousCount != count) {
-                // save db
-                try {
-                    console.log('trying to save ' + channel.id)
-                    await query('INSERT INTO news_stat SET ?', {
-                        time: new Date(),
-                        channel: channel.id,
-                        count: count
-                    })
-                } catch (err) {
-                    console.error('saving error:' + err)
-                    bot.sendMessage(config.main_channel, '#数据库错误 ' + err, {
-                        disable_notification: true,
-                        parse_mode: 'Markdown',
-                        disable_web_page_preview: true
-                    })
-                }
-                if(channel.previousCount != 0) {
-                    // really modified
-                    let output = '#港股L2行情 #'+ channel.category + ' [' + channel.name + '](https://t.me/' + channel.id + ') '
-                    if(channel.previousCount < count) {
-                        output = output + count + '🔺(' + (channel.count - channel.previousCount) + ')'
-                    } else {
-                        output = output + count + '🔻(' + (channel.previousCount - channel.count) + ')'
-                    }
-                    bot.sendMessage(config.main_channel, output, {
-                        disable_notification: true,
-                        parse_mode: 'Markdown',
-                        disable_web_page_preview: true
-                    })
-                }
+        let count = await bot.getChatMembersCount('@' + channel.id)
+        channel.count = count
+
+        if(channel.previousCount != count) {
+            // save db
+            try {
+                console.log('trying to save ' + channel.id)
+                await query('INSERT INTO news_stat SET ?', {
+                    time: new Date(),
+                    channel: channel.id,
+                    count: count
+                })
+            } catch (err) {
+                console.error('saving error:' + err)
+                bot.sendMessage(config.main_channel, '#数据库错误 ' + err, {
+                    disable_notification: true,
+                    parse_mode: 'Markdown',
+                    disable_web_page_preview: true
+                })
             }
-            channel.previousCount = count
-            channels[i] = channel
-        })
+            if(channel.previousCount != 0) {
+                // really modified
+                let output = '#港股L2行情 #'+ channel.category + ' [' + channel.name + '](https://t.me/' + channel.id + ') '
+                if(channel.previousCount < count) {
+                    output = output + count + '🔺(' + (channel.count - channel.previousCount) + ')'
+                } else {
+                    output = output + count + '🔻(' + (channel.previousCount - channel.count) + ')'
+                }
+                bot.sendMessage(config.main_channel, output, {
+                    disable_notification: true,
+                    parse_mode: 'Markdown',
+                    disable_web_page_preview: true
+                })
+            }
+        }
+
+        channel.previousCount = count
+        channels[i] = channel
     }
+
+    return
 }
 
 function returnWeibo(id) {
