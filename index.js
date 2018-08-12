@@ -119,8 +119,8 @@ async function init() {
     })
     
     let reportJob = schedule.scheduleJob('10 * * * * *', async () => {
-        let nowTime = moment()
-        console.log('[' + moment().tz('Asia/Shanghai').format('YYYY/MM/DD HH:mm:ss') + '] Running 速报')
+        let nowTime = moment().tz('Asia/Shanghai')
+        console.log('[' + nowTime.format('YYYY/MM/DD HH:mm:ss') + '] Running 速报')
 
         output = ''
         preList = {}
@@ -149,8 +149,8 @@ async function init() {
                 output = output + '#港股测试报道'
         }
 
-        output = output + " *" + moment().tz('Asia/Shanghai').subtract(6, 'hours').format('YYYY/MM/DD [HKT] HH:mm [-]') + ' ' +
-                          moment().tz('Asia/Shanghai').format('HH:mm')  + '*\n'
+        output = output + " *" + nowTime.subtract(6, 'hours').format('YYYY/MM/DD [HKT] HH:mm [-]') + ' ' +
+                          nowTime.add(6, 'hours').format('HH:mm')  + '*\n'
 
         switch (nowTime.hour()) {
             case 0:
