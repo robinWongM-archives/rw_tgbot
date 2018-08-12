@@ -202,7 +202,7 @@ async function init() {
         if(allSum.previous < allSum.current) {
             // Up
             output = output + '*上涨 ' + (round(((allSum.current - allSum.previous) / allSum.previous) * 100, 2).toFixed(2)) + '% (' + (allSum.current - allSum.previous) + '.00)*'
-        } else if(ret.count > channel.count) {
+        } else if(allSum.previous > allSum.current) {
             output = output + '*下跌 ' + (round(((allSum.previous - allSum.current) / allSum.previous) * 100, 2).toFixed(2)) + '% (' + (allSum.current - allSum.previous) + '.00)*'
         } else {
             output = output + '平盘 0.00% (0.00)'
@@ -217,7 +217,7 @@ async function init() {
                 if(list.sum.previous < list.sum.current) {
                     // Up
                     output = output + '*上涨 ' + (round(((list.sum.current - list.sum.previous) / list.sum.previous) * 100, 2).toFixed(2)) + '% (' + (list.sum.current - list.sum.previous) + '.00)*'
-                } else if(ret.count > channel.count) {
+                } else if(list.sum.previous > list.sum.current) {
                     output = output + '*下跌 ' + (round(((list.sum.previous - list.sum.current) / list.sum.previous) * 100, 2).toFixed(2)) + '% (' + (list.sum.current - list.sum.previous) + '.00)*'
                 } else {
                     output = output + '平盘 0.00% (0.00)'
@@ -231,7 +231,7 @@ async function init() {
                     if(channel.previousCount < channel.count) {
                         // Up
                         output = output + '*上涨 ' + (round(((channel.count - channel.previousCount) / channel.previousCount) * 100, 2).toFixed(2)) + '% (' + (channel.count - channel.previousCount) + '.00)*'
-                    } else if(ret.count > channel.count) {
+                    } else if(channel.previousCount > channel.count) {
                         output = output + '*下跌 ' + (round(((channel.previousCount - channel.count) / channel.previousCount) * 100, 2).toFixed(2)) + '% (' + (channel.previousCount - channel.count) + '.00)*'
                     } else {
                         output = output + '平盘 0.00% (0.00)'
