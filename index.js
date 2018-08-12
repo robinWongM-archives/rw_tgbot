@@ -185,7 +185,7 @@ async function init() {
                     const channel = list[i]
                     let ret = await query('SELECT count FROM news_stat ' +
                                           'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
-                                          'AND time <= ' + mysql.escape(moment().subtract('1', 'hours').format("YYYY-MM-DD HH:mm:ss")) + 
+                                          'AND time <= ' + mysql.escape(moment().subtract('6', 'hours').format("YYYY-MM-DD HH:mm:ss")) + 
                                           'ORDER BY time DESC LIMIT 1')
                     if(!ret) {
                         ret = await query('SELECT count FROM news_stat ' +
@@ -193,7 +193,7 @@ async function init() {
                                           'ORDER BY time LIMIT 1')
                     }
 
-                    list[i].previousCount = ret[0].count
+                    list[i].lastCount = ret[0].count
                     listSum.previous += ret[0].count
                     listSum.current += channel.count
                 }
@@ -219,7 +219,7 @@ async function init() {
         for (const key in preList) {
             if (preList.hasOwnProperty(key)) {
                 let list = preList[key]
-                output = output + '\n#' + key + ' 板块报 ' + list.sum.current + '点，'
+                output = output + '\n#' + key + ' 板块报 ' + list.sum.current + ' 点，'
                 if(list.sum.previous < list.sum.current) {
                     // Up
                     output = output + '*上涨 ' + (round(((list.sum.current - list.sum.previous) / list.sum.previous) * 100, 2).toFixed(2)) + '% (' + (list.sum.current - list.sum.previous) + '.00)*'
@@ -234,11 +234,11 @@ async function init() {
                 list.forEach(channel => {
                     output = output + '[' + channel.name + '](https://t.me/' + channel.id + ') 报 ' + channel.count + ' 点，'
                     
-                    if(channel.previousCount < channel.count) {
+                    if(channel.lastCount < channel.count) {
                         // Up
-                        output = output + '*上涨 ' + (round(((channel.count - channel.previousCount) / channel.previousCount) * 100, 2).toFixed(2)) + '% (' + (channel.count - channel.previousCount) + '.00)*'
-                    } else if(channel.previousCount > channel.count) {
-                        output = output + '*下跌 ' + (round(((channel.previousCount - channel.count) / channel.previousCount) * 100, 2).toFixed(2)) + '% (' + (channel.previousCount - channel.count) + '.00)*'
+                        output = output + '*上涨 ' + (round(((channel.count - channel.lastCount) / channel.lastCount) * 100, 2).toFixed(2)) + '% (' + (channel.count - channel.lastCount) + '.00)*'
+                    } else if(channel.lastCount > channel.count) {
+                        output = output + '*下跌 ' + (round(((channel.lastCount - channel.count) / channel.lastCount) * 100, 2).toFixed(2)) + '% (' + (channel.lastCount - channel.count) + '.00)*'
                     } else {
                         output = output + '平盘 0.00% (0.00)'
                     }
