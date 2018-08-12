@@ -77,8 +77,7 @@ async function init() {
 
             let channelRow = await query('SELECT * FROM news_stat ' +
                                             'WHERE channel = ' + mysql.escape(channel.id) + ' ' + 
-                                            'LIMIT 1' +
-                                            'ORDER BY time DESC')
+                                            'ORDER BY time DESC LIMIT 1')
             console.log(channelRow)
             if(channelRow.length) {
                 channels[i].previousCount = channels[i].count = channelRow[0].count
