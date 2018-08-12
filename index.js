@@ -310,4 +310,11 @@ let job = schedule.scheduleJob('* * * * *', () => {
             output = output + '平盘 0.00% (' + channel.count + '.00)'
         }
     }
+
+    bot.sendMessage('@the_BetaNews', output, {
+        parse_mode: 'Markdown',
+        disable_notification: true,
+        disable_web_page_preview: true
+    })
+
 })
