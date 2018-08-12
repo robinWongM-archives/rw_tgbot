@@ -276,4 +276,4 @@ setInterval(() => {
 }, 30000)
 
 fetchLatest() */
-fetchCount() // initialize
+init()
