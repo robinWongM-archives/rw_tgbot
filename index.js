@@ -61,7 +61,7 @@ config.channels.forEach(category => {
 
 async function init() {
     // Read from database
-    try {
+    //try {
         console.log('initing')
         await query('CREATE TABLE IF NOT EXISTS news_stat ( ' +
                               'id INT UNSIGNED AUTO_INCREMENT, ' +
@@ -87,9 +87,9 @@ async function init() {
 
         // and then fetch the latets count
         fetchCount()
-    } catch (err) {
-        console.error(err)
-    }
+    //} catch (err) {
+    //    console.error(err)
+    //}
 }
 
 async function fetchCount() {
