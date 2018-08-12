@@ -296,7 +296,8 @@ let job = schedule.scheduleJob('* * * * *', async () => {
                   'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
                   'ORDER BY time LIMIT 1')
         }
-        console.log('query ret: ' + ret + ' ')
+        ret = ret[0]
+        console.log('query ret: ' + ret.count + ' ')
 
         output = output + '\n'
                  + channel.category + '板块 [' + channel.name + '](https://t.me/' + channel.id + ') 报' + channel.count + '点，'
