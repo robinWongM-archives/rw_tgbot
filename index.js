@@ -282,17 +282,17 @@ setInterval(() => {
 }, 30000)
 
 fetchLatest() */
-let job = schedule.scheduleJob('* * * * *', () => {
+let job = schedule.scheduleJob('* * * * *', async () => {
     console.log('Running 一分钟速报')
     output = "#港股一分钟速报 *当前时间：" + moment().tz('Asia/Shanghai').format('LTS') + '*'
 
     for (const channel of channels) {
-        let ret = query('SELECT count FROM news_stat ' +
+        let ret = await query('SELECT count FROM news_stat ' +
                         'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
                               'AND time <= ' + mysql.escape(moment().subtract('1', 'minutes').format("YYYY-MM-DD HH:mm:ss")) + 
                               'ORDER BY time DESC LIMIT 1')
         if(!ret) {
-            ret = query('SELECT count FROM news_stat ' +
+            ret = await query('SELECT count FROM news_stat ' +
                   'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
                   'ORDER BY time LIMIT 1')
         }
