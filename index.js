@@ -62,6 +62,7 @@ config.channels.forEach(category => {
 async function init() {
     // Read from database
     try {
+        console.log('initing')
         await query('CREATE TABLE IF NOT EXISTS news_stat ( ' +
                               'id INT UNSIGNED AUTO_INCREMENT, ' +
                               'time DATETIME NOT NULL, ' +
@@ -78,7 +79,7 @@ async function init() {
                                             'WHERE channel = ' + channel.id + ' ' + 
                                             'LIMIT 1' +
                                             'ORDER BY time DESC')
-            console.log('init', channelRow)
+            console.log(channelRow)
             if(channelRow.length) {
                 channels[i].previousCount = channels[i].count = channelRow[0].count
                 console.log('loaded data: '+ channel.id + ' ' + channels[i].previousCount)
@@ -270,6 +271,7 @@ bot.on('polling_error', error => {
     console.log('Polling error:' + error.code)
 })
 
+init()
 
 setInterval(() => {
     fetchCount()
@@ -280,4 +282,3 @@ setInterval(() => {
 }, 30000)
 
 fetchLatest() */
-init()
