@@ -118,7 +118,7 @@ async function init() {
         fetchCount()
     })
     
-    let reportJob = schedule.scheduleJob('10 */6 * * * *', async () => {
+    let reportJob = schedule.scheduleJob('10 * * * * *', async () => {
         let nowTime = moment()
         console.log('[' + moment().tz('Asia/Shanghai').format('YYYY/MM/DD HH:mm:ss') + '] Running 速报')
 
@@ -192,6 +192,8 @@ async function init() {
                                           'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
                                           'ORDER BY time LIMIT 1')
                     }
+                    console.log(ret)
+                    console.log(ret[0])
 
                     list[i].lastCount = ret[0].count
                     listSum.previous += ret[0].count
@@ -250,7 +252,7 @@ async function init() {
 
         output = output + '\n本报道由上海商业银行特约播出'
     
-        bot.sendMessage(config.main_channel, output, {
+        bot.sendMessage('@the_BetaNews', output, {
             parse_mode: 'Markdown',
             disable_notification: true,
             disable_web_page_preview: true
