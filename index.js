@@ -40,6 +40,26 @@ const query = function( sql, values ) {
     })
   }
 
+  // Thanks to https://stackoverflow.com/a/21323330
+function round(value, exp) {
+    if (typeof exp === 'undefined' || +exp === 0)
+      return Math.round(value);
+  
+    value = +value;
+    exp = +exp;
+  
+    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0))
+      return NaN;
+  
+    // Shift
+    value = value.toString().split('e');
+    value = Math.round(+(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp)));
+  
+    // Shift back
+    value = value.toString().split('e');
+    return +(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp));
+  }
+
 // replace the value below with the Telegram token you receive from @BotFather
 const token = config.bot_token;
 
@@ -87,10 +107,53 @@ async function init() {
         }
 
         // and then fetch the latets count
-        fetchCount()
+        await fetchCount()
     //} catch (err) {
     //    console.error(err)
     //}
+
+    // setting up scheduled job
+    let updateJob = schedule.scheduleJob('20/* * * * *', async () => {
+        fetchCount()
+    })
+    
+    let reportJob = schedule.scheduleJob('10 * * * *', async () => {
+        console.log('Running 速报')
+        output = "#港股小时速报 *当前时间：" + moment().tz('Asia/Shanghai').format('LTS') + '*'
+    
+        for (const channel of channels) {
+            let ret = await query('SELECT count FROM news_stat ' +
+                            'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
+                                  'AND time <= ' + mysql.escape(moment().subtract('1', 'hours').format("YYYY-MM-DD HH:mm:ss")) + 
+                                  'ORDER BY time DESC LIMIT 1')
+            if(!ret) {
+                ret = await query('SELECT count FROM news_stat ' +
+                      'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
+                      'ORDER BY time LIMIT 1')
+            }
+            ret = ret[0]
+            console.log('query ret: ' + ret.count + ' ')
+    
+            output = output + '\n'
+                     +  '[' + channel.name + '](https://t.me/' + channel.id + ') 报 ' + channel.count + ' 点，'
+            
+            if(ret.count < channel.count) {
+                // Up
+                output = output + '*上涨 ' + (round((channel.count - ret.count) / ret.count * 100).toFixed(2)) + '% (' + (channel.count - ret.count) + '.00)*'
+            } else if(ret.count > channel.count) {
+                output = output + '*下跌 ' + (round((ret.count - channel.count) / ret.count * 100).toFixed(2)) + '% (' + (ret.count - channel.count) + '.00)*'
+            } else {
+                output = output + '平盘 0.00% (0.00)'
+            }
+        }
+    
+        bot.sendMessage(config.main_channel, output, {
+            parse_mode: 'Markdown',
+            disable_notification: true,
+            disable_web_page_preview: true
+        })
+    
+    })
 }
 
 async function fetchCount() {
@@ -273,70 +336,8 @@ bot.on('polling_error', error => {
 
 init()
 
-setInterval(() => {
-    fetchCount()
-}, 30000)
-
 /* setInterval(() => {
     fetchLatest()
 }, 30000)
 
 fetchLatest() */
-
-// Thanks to https://stackoverflow.com/a/21323330
-function round(value, exp) {
-    if (typeof exp === 'undefined' || +exp === 0)
-      return Math.round(value);
-  
-    value = +value;
-    exp = +exp;
-  
-    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0))
-      return NaN;
-  
-    // Shift
-    value = value.toString().split('e');
-    value = Math.round(+(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp)));
-  
-    // Shift back
-    value = value.toString().split('e');
-    return +(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp));
-  }
-
-let job = schedule.scheduleJob('* * * * *', async () => {
-    console.log('Running 一分钟速报')
-    output = "#港股一分钟速报 *当前时间：" + moment().tz('Asia/Shanghai').format('LTS') + '*'
-
-    for (const channel of channels) {
-        let ret = await query('SELECT count FROM news_stat ' +
-                        'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
-                              'AND time <= ' + mysql.escape(moment().subtract('1', 'minutes').format("YYYY-MM-DD HH:mm:ss")) + 
-                              'ORDER BY time DESC LIMIT 1')
-        if(!ret) {
-            ret = await query('SELECT count FROM news_stat ' +
-                  'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
-                  'ORDER BY time LIMIT 1')
-        }
-        ret = ret[0]
-        console.log('query ret: ' + ret.count + ' ')
-
-        output = output + '\n'
-                 +  '[' + channel.name + '](https://t.me/' + channel.id + ') 报 ' + channel.count + ' 点，'
-        
-        if(ret.count < channel.count) {
-            // Up
-            output = output + '*上涨 ' + (round((channel.count - ret.count) / ret.count * 100).toFixed(3)) + '% (' + (channel.count - ret.count) + '.00)*'
-        } else if(ret.count > channel.count) {
-            output = output + '*下跌 ' + (round((ret.count - channel.count) / ret.count * 100).toFixed(3)) + '% (' + (ret.count - channel.count) + '.00)*'
-        } else {
-            output = output + '平盘 0.00% (0.00)'
-        }
-    }
-
-    bot.sendMessage('@the_BetaNews', output, {
-        parse_mode: 'Markdown',
-        disable_notification: true,
-        disable_web_page_preview: true
-    })
-
-})
