@@ -176,7 +176,7 @@ async function init() {
                     previous: 0,
                     current: 0
                 }
-                list.forEach((channel, i, arr) => {
+                list.forEach(async (channel, i, arr) => {
                     let ret = await query('SELECT count FROM news_stat ' +
                                           'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
                                           'AND time <= ' + mysql.escape(moment().subtract('1', 'hours').format("YYYY-MM-DD HH:mm:ss")) + 
