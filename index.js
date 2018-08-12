@@ -300,7 +300,7 @@ let job = schedule.scheduleJob('* * * * *', async () => {
         console.log('query ret: ' + ret.count + ' ')
 
         output = output + '\n'
-                 + channel.category + '板块 [' + channel.name + '](https://t.me/' + channel.id + ') 报' + channel.count + '点，'
+                 +  '[' + channel.name + '](https://t.me/' + channel.id + ') 报 ' + channel.count + ' 点，'
         
         if(ret.count < channel.count) {
             // Up
@@ -308,7 +308,7 @@ let job = schedule.scheduleJob('* * * * *', async () => {
         } else if(ret.count > channel.count) {
             output = output + '*下跌 ' + ((ret.count - channel.count) / ret.count * 100) + '% (' + (ret.count - channel.count) + '.00)*'
         } else {
-            output = output + '平盘 0.00% (' + channel.count + '.00)'
+            output = output + '平盘 0.00% (0.00)'
         }
     }
 
