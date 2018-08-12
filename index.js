@@ -45,9 +45,13 @@ const token = config.bot_token;
 const bot = new TelegramBot(token, {polling: true});
 
 let channels = []
-config.channels.forEach(category => {
-    category.items.forEach(channel => {
-        bot.getChat('@' + channel).then(chat => {
+
+async function init() {
+    // init channel
+    for (const category of config.channels) {
+        console.log(category.items)
+        for (const channel of category.items) {
+            let chat = await bot.getChat('@' + channel)
             channels.push({
                 id: channel,
                 name: chat.title,
@@ -55,14 +59,11 @@ config.channels.forEach(category => {
                 previousCount: 0,
                 count: 0
             })
-        })
-    })
-})
+        }
+    }
 
-async function init() {
     // Read from database
     //try {
-        console.log('initing')
         await query('CREATE TABLE IF NOT EXISTS news_stat ( ' +
                               'id INT UNSIGNED AUTO_INCREMENT, ' +
                               'time DATETIME NOT NULL, ' +
@@ -72,8 +73,10 @@ async function init() {
                               ') ENGINE=innoDB CHARSET=utf8')
         
         //let latest = await query('SELECT * FROM news_stat')
+        console.log(channels)
         for (let i = 0; i < channels.length; i++) {
             const channel = channels[i]
+            console.log('heelo')
 
             let channelRow = await query('SELECT * FROM news_stat ' +
                                             'WHERE channel = ' + mysql.escape(channel.id) + ' ' + 
