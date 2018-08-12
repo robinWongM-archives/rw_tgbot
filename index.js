@@ -208,14 +208,14 @@ async function init() {
 
         if(allSum.previous < allSum.current) {
             // Up
-            output = output + '*上涨 ' + (round(((allSum.current - allSum.previous) / allSum.previous) * 100, 2).toFixed(2)) + '% (' + (allSum.current - allSum.previous) + '.00)*'
+            output = output + '*上涨📈 ' + (round(((allSum.current - allSum.previous) / allSum.previous) * 100, 2).toFixed(2)) + '% (' + (allSum.current - allSum.previous) + '.00)*'
         } else if(allSum.previous > allSum.current) {
-            output = output + '*下跌 ' + (round(((allSum.previous - allSum.current) / allSum.previous) * 100, 2).toFixed(2)) + '% (' + (allSum.current - allSum.previous) + '.00)*'
+            output = output + '*下跌📉 ' + (round(((allSum.previous - allSum.current) / allSum.previous) * 100, 2).toFixed(2)) + '% (' + (allSum.current - allSum.previous) + '.00)*'
         } else {
             output = output + '平盘 0.00% (0.00)'
         }
 
-        output = output + '。再来看各个板块的情况：\n'
+        output = output + '。来看各个板块的情况：\n'
 
         for (const key in preList) {
             if (preList.hasOwnProperty(key)) {
@@ -223,9 +223,9 @@ async function init() {
                 output = output + '\n#' + key + ' 板块报 ' + list.sum.current + ' 点，'
                 if(list.sum.previous < list.sum.current) {
                     // Up
-                    output = output + '*上涨 ' + (round(((list.sum.current - list.sum.previous) / list.sum.previous) * 100, 2).toFixed(2)) + '% (' + (list.sum.current - list.sum.previous) + '.00)*'
+                    output = output + '*上涨📈 ' + (round(((list.sum.current - list.sum.previous) / list.sum.previous) * 100, 2).toFixed(2)) + '% (' + (list.sum.current - list.sum.previous) + '.00)*'
                 } else if(list.sum.previous > list.sum.current) {
-                    output = output + '*下跌 ' + (round(((list.sum.previous - list.sum.current) / list.sum.previous) * 100, 2).toFixed(2)) + '% (' + (list.sum.current - list.sum.previous) + '.00)*'
+                    output = output + '*下跌📉 ' + (round(((list.sum.previous - list.sum.current) / list.sum.previous) * 100, 2).toFixed(2)) + '% (' + (list.sum.current - list.sum.previous) + '.00)*'
                 } else {
                     output = output + '平盘 0.00% (0.00)'
                 }
@@ -237,9 +237,9 @@ async function init() {
                     
                     if(channel.lastCount < channel.count) {
                         // Up
-                        output = output + '*上涨 ' + (round(((channel.count - channel.lastCount) / channel.lastCount) * 100, 2).toFixed(2)) + '% (' + (channel.count - channel.lastCount) + '.00)*'
+                        output = output + '*上涨📈 ' + (round(((channel.count - channel.lastCount) / channel.lastCount) * 100, 2).toFixed(2)) + '% (' + (channel.count - channel.lastCount) + '.00)*'
                     } else if(channel.lastCount > channel.count) {
-                        output = output + '*下跌 ' + (round(((channel.lastCount - channel.count) / channel.lastCount) * 100, 2).toFixed(2)) + '% (' + (channel.lastCount - channel.count) + '.00)*'
+                        output = output + '*下跌📉 ' + (round(((channel.lastCount - channel.count) / channel.lastCount) * 100, 2).toFixed(2)) + '% (' + (channel.lastCount - channel.count) + '.00)*'
                     } else {
                         output = output + '平盘 0.00% (0.00)'
                     }
