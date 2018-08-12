@@ -16,6 +16,8 @@ const pool = mysql.createPool({
     password :  config.mysql_token,
     database :  'news_media'
 })
+const schedule = require('node-schedule'),
+      moment = require('moment')
 
 const query = function( sql, values ) {
     // 返回一个 Promise
@@ -49,7 +51,6 @@ let channels = []
 async function init() {
     // init channel
     for (const category of config.channels) {
-        console.log(category.items)
         for (const channel of category.items) {
             let chat = await bot.getChat('@' + channel)
             channels.push({
@@ -73,15 +74,12 @@ async function init() {
                               ') ENGINE=innoDB CHARSET=utf8')
         
         //let latest = await query('SELECT * FROM news_stat')
-        console.log(channels)
         for (let i = 0; i < channels.length; i++) {
             const channel = channels[i]
-            console.log('heelo')
 
             let channelRow = await query('SELECT * FROM news_stat ' +
                                             'WHERE channel = ' + mysql.escape(channel.id) + ' ' + 
                                             'ORDER BY time DESC LIMIT 1')
-            console.log(channelRow)
             if(channelRow.length) {
                 channels[i].previousCount = channels[i].count = channelRow[0].count
                 console.log('loaded data: '+ channel.id + ' ' + channels[i].previousCount)
@@ -277,10 +275,39 @@ init()
 
 setInterval(() => {
     fetchCount()
-}, 10000)
+}, 30000)
 
 /* setInterval(() => {
     fetchLatest()
 }, 30000)
 
 fetchLatest() */
+let job = schedule.scheduledJobs('* * * * *', () => {
+    console.log('Running 一分钟速报')
+    output = "#港股一分钟速报 *当前时间：" + moment().tz('Asia/Shanghai').format('LTS') + '*'
+
+    for (const channel of channels) {
+        let ret = query('SELECT count FROM news_stat ' +
+                        'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
+                              'AND time <= ' + mysql.escape(moment().subtract('1', 'minutes').format("YYYY-MM-DD HH:mm:ss")) + 
+                              'ORDER BY time DESC LIMIT 1')
+        if(!ret.length) {
+            ret = query('SELECT count FROM news_stat ' +
+                  'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
+                  'ORDER BY time LIMIT 1')
+        }
+        console.log('query ret: ' + channel.id + ' ')
+
+        output = output + '\n'
+                 + channel.category + '板块 [' + channel.name + '](https://t.me/' + channel.id + ') 报' + channel.count + '点，'
+        
+        if(ret[0].count < channel.count) {
+            // Up
+            output = output + '*上涨 ' + ((channel.count - ret[0].count) / ret[0].count * 100) + '% (' + (channel.count - ret[0].count) + '.00)*'
+        } else if(ret[0].count > channel.count) {
+            output = output + '*下跌 ' + ((ret[0].count - channel.count) / ret[0].count * 100) + '% (' + (ret[0].count - channel.count) + '.00)*'
+        } else {
+            output = output + '平盘 0.00% (' + channel.count + '.00)'
+        }
+    }
+})
