@@ -145,6 +145,8 @@ async function init() {
             case 18:
                 output = output + '#港股收市报道'
                 break
+            default:
+                output = output + '#港股测试报道'
         }
 
         output = " *" + moment().tz('Asia/Shanghai').format('YYYY/MM/DD [HKT] HH:mm') + '*\n'
@@ -162,6 +164,8 @@ async function init() {
             case 18:
                 output = output + '截止下午收盘，'
                 break
+            default:
+                output = output + '截止本次抽风，'
         }
 
         let allSum = {
