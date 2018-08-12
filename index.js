@@ -149,7 +149,7 @@ async function init() {
                 output = output + '#港股测试报道'
         }
 
-        output = " *" + moment().tz('Asia/Shanghai').format('YYYY/MM/DD [HKT] HH:mm') + '*\n'
+        output = output + " *" + moment().tz('Asia/Shanghai').format('YYYY/MM/DD [HKT] HH:mm') + '*\n'
 
         switch (nowTime.hour()) {
             case 0:
@@ -180,7 +180,9 @@ async function init() {
                     previous: 0,
                     current: 0
                 }
-                list.forEach(async (channel, i, arr) => {
+
+                for (let i = 0; i < list.length; i++) {
+                    const channel = list[i]
                     let ret = await query('SELECT count FROM news_stat ' +
                                           'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
                                           'AND time <= ' + mysql.escape(moment().subtract('1', 'hours').format("YYYY-MM-DD HH:mm:ss")) + 
@@ -191,10 +193,10 @@ async function init() {
                                           'ORDER BY time LIMIT 1')
                     }
 
-                    arr[i].previousCount = ret[0].count
+                    list[i].previousCount = ret[0].count
                     listSum.previous += ret[0].count
                     listSum.current += channel.count
-                })
+                }
                 preList[key].sum = listSum
                 allSum.previous += listSum.previous
                 allSum.current += listSum.current
