@@ -97,19 +97,7 @@ async function fetchCount() {
         let channel = channels[i]
         bot.getChatMembersCount('@' + channel.id).then(async count => {
             channel.count = count
-            if(channel.previousCount != 0 && channel.previousCount != count) {
-                // modified
-                let output = '#港股L2行情 #'+ channel.category + ' [' + channel.name + '](https://t.me/' + channel.id + ') '
-                if(channel.previousCount < count) {
-                    output = output + count + '🔺(' + (channel.count - channel.previousCount) + ')'
-                } else {
-                    output = output + count + '🔻(' + (channel.previousCount - channel.count) + ')'
-                }
-                bot.sendMessage(config.main_channel, output, {
-                    disable_notification: true,
-                    parse_mode: 'Markdown',
-                    disable_web_page_preview: true
-                })
+            if(channel.previousCount != count) {
                 // save db
                 try {
                     await query('INSERT INTO news_stat SET ?', {
@@ -119,6 +107,20 @@ async function fetchCount() {
                     })
                 } catch (err) {
                     bot.sendMessage(config.main_channel, '#数据库错误 ' + err, {
+                        disable_notification: true,
+                        parse_mode: 'Markdown',
+                        disable_web_page_preview: true
+                    })
+                }
+                if(channel.previousCount != 0) {
+                    // really modified
+                    let output = '#港股L2行情 #'+ channel.category + ' [' + channel.name + '](https://t.me/' + channel.id + ') '
+                    if(channel.previousCount < count) {
+                        output = output + count + '🔺(' + (channel.count - channel.previousCount) + ')'
+                    } else {
+                        output = output + count + '🔻(' + (channel.previousCount - channel.count) + ')'
+                    }
+                    bot.sendMessage(config.main_channel, output, {
                         disable_notification: true,
                         parse_mode: 'Markdown',
                         disable_web_page_preview: true
