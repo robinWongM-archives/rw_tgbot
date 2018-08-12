@@ -291,7 +291,7 @@ let job = schedule.scheduleJob('* * * * *', () => {
                         'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
                               'AND time <= ' + mysql.escape(moment().subtract('1', 'minutes').format("YYYY-MM-DD HH:mm:ss")) + 
                               'ORDER BY time DESC LIMIT 1')
-        if(!ret.length) {
+        if(!ret) {
             ret = query('SELECT count FROM news_stat ' +
                   'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
                   'ORDER BY time LIMIT 1')
@@ -301,11 +301,11 @@ let job = schedule.scheduleJob('* * * * *', () => {
         output = output + '\n'
                  + channel.category + '板块 [' + channel.name + '](https://t.me/' + channel.id + ') 报' + channel.count + '点，'
         
-        if(ret[0].count < channel.count) {
+        if(ret.count < channel.count) {
             // Up
-            output = output + '*上涨 ' + ((channel.count - ret[0].count) / ret[0].count * 100) + '% (' + (channel.count - ret[0].count) + '.00)*'
-        } else if(ret[0].count > channel.count) {
-            output = output + '*下跌 ' + ((ret[0].count - channel.count) / ret[0].count * 100) + '% (' + (ret[0].count - channel.count) + '.00)*'
+            output = output + '*上涨 ' + ((channel.count - ret.count) / ret.count * 100) + '% (' + (channel.count - ret.count) + '.00)*'
+        } else if(ret.count > channel.count) {
+            output = output + '*下跌 ' + ((ret.count - channel.count) / ret.count * 100) + '% (' + (ret.count - channel.count) + '.00)*'
         } else {
             output = output + '平盘 0.00% (' + channel.count + '.00)'
         }
