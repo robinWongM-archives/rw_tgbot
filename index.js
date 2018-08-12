@@ -80,7 +80,7 @@ async function init() {
                                              'LIMIT 1' +
                                              'ORDER BY time DESC')
                 if(channelRow.length) {
-                    channels[i].previousCount = channels[i].count = channelRow.count
+                    channels[i].previousCount = channels[i].count = channelRow[0].count
                 }
             }
         }
