@@ -82,6 +82,7 @@ async function init() {
                 console.log('init', channelRow)
                 if(channelRow.length) {
                     channels[i].previousCount = channels[i].count = channelRow[0].count
+                    console.log('loaded data: '+ channel.id + ' ' + channels[i].previousCount)
                 }
             }
         }
