@@ -62,7 +62,7 @@ config.channels.forEach(category => {
 async function init() {
     // Read from database
     try {
-        let ret = await query('CREATE TABLE IF NOT EXISTS news_stat ( ' +
+        await query('CREATE TABLE IF NOT EXISTS news_stat ( ' +
                               'id INT UNSIGNED AUTO_INCREMENT, ' +
                               'time DATETIME NOT NULL, ' +
                               'channel VARCHAR(128) NOT NULL, ' +
@@ -70,20 +70,18 @@ async function init() {
                               'PRIMARY KEY (id)' +
                               ') ENGINE=innoDB CHARSET=utf8')
         
-        if(ret) {
-            //let latest = await query('SELECT * FROM news_stat')
-            for (let i = 0; i < channels.length; i++) {
-                const channel = channels[i]
-    
-                let channelRow = await query('SELECT * FROM news_stat ' +
-                                             'WHERE channel = ' + channel.id + ' ' + 
-                                             'LIMIT 1' +
-                                             'ORDER BY time DESC')
-                console.log('init', channelRow)
-                if(channelRow.length) {
-                    channels[i].previousCount = channels[i].count = channelRow[0].count
-                    console.log('loaded data: '+ channel.id + ' ' + channels[i].previousCount)
-                }
+        //let latest = await query('SELECT * FROM news_stat')
+        for (let i = 0; i < channels.length; i++) {
+            const channel = channels[i]
+
+            let channelRow = await query('SELECT * FROM news_stat ' +
+                                            'WHERE channel = ' + channel.id + ' ' + 
+                                            'LIMIT 1' +
+                                            'ORDER BY time DESC')
+            console.log('init', channelRow)
+            if(channelRow.length) {
+                channels[i].previousCount = channels[i].count = channelRow[0].count
+                console.log('loaded data: '+ channel.id + ' ' + channels[i].previousCount)
             }
         }
 
