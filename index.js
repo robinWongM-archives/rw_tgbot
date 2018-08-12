@@ -139,9 +139,9 @@ async function init() {
             
             if(ret.count < channel.count) {
                 // Up
-                output = output + '*上涨 ' + (round((channel.count - ret.count) / ret.count * 100).toFixed(2)) + '% (' + (channel.count - ret.count) + '.00)*'
+                output = output + '*上涨 ' + (round(((channel.count - ret.count) / ret.count) * 100).toFixed(2)) + '% (' + (channel.count - ret.count) + '.00)*'
             } else if(ret.count > channel.count) {
-                output = output + '*下跌 ' + (round((ret.count - channel.count) / ret.count * 100).toFixed(2)) + '% (' + (ret.count - channel.count) + '.00)*'
+                output = output + '*下跌 ' + (round(((ret.count - channel.count) / ret.count) * 100).toFixed(2)) + '% (' + (ret.count - channel.count) + '.00)*'
             } else {
                 output = output + '平盘 0.00% (0.00)'
             }
