@@ -516,9 +516,9 @@ bot.on('callback_query', async query => {
                 message_id: query.message.message_id
             })
             let screenshot = await renderImage(data.data)
-            bot.sendPhoto(query.chat.id, screenshot)
+            await bot.sendPhoto(query.chat.id, screenshot)
         }
-        bot.answerCallbackQuery({
+        await bot.answerCallbackQuery({
             callback_query_id: query.id
         })
     }
