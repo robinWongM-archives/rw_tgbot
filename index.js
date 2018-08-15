@@ -20,7 +20,6 @@ const schedule = require('node-schedule'),
       moment = require('moment')
 
 const puppeteer = require('puppeteer')
-const browser = await puppeteer.launch()
 
 const query = function( sql, values ) {
     // 返回一个 Promise
@@ -464,10 +463,11 @@ async function renderImage(channel) {
         </body>
     </html>
     `
+    const browser = await puppeteer.launch()
     const page = await browser.newPage()
     await page.goto(`data:text/html,${html}`)
     const screenshot = await page.screenshot()
-    await page.close()
+    await browser.close()
 
     return screenshot
 }
