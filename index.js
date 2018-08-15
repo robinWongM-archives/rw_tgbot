@@ -502,18 +502,21 @@ bot.on('callback_query', async query => {
 
             // Valid, and edit the message
             await bot.editMessageText('请选择频道：', {
-                message_id: query.message.message_id
+                message_id: query.message.message_id,
+                chat_id: query.chat.id
             })
             await bot.editMessageReplyMarkup({
                 inline_keyboard: preList[data.data]
             }, {
-                message_id: query.message.message_id
+                message_id: query.message.message_id,
+                chat_id: query.chat.id
             })
 
         } else if(data.type === 'channel') {
             // We display the chart
             await bot.editMessageText('正在一台铁臂阿童木变身的服务器上生成图表，生成速度较慢，请耐心等待。', {
-                message_id: query.message.message_id
+                message_id: query.message.message_id,
+                chat_id: query.chat.id
             })
             let screenshot = await renderImage(data.data)
             await bot.sendPhoto(query.chat.id, screenshot)
