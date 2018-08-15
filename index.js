@@ -473,8 +473,7 @@ async function renderImage(channel, name='') {
     const page = await browser.newPage()
     await page.setViewport({
         width: 1280,
-        height: 720,
-        deviceScaleFactor: 2
+        height: 720
     })
     await page.goto(`data:text/html,${html}`)
     const screenshot = await page.screenshot()
