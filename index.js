@@ -19,6 +19,9 @@ const pool = mysql.createPool({
 const schedule = require('node-schedule'),
       moment = require('moment')
 
+const puppeteer = require('puppeteer')
+const browser = await puppeteer.launch()
+
 const query = function( sql, values ) {
     // 返回一个 Promise
     return new Promise(( resolve, reject ) => {
@@ -397,6 +400,131 @@ bot.onText(/\/weiboid (.+)/, (msg, match) => {
     bot.sendMessage(chatId, 'Try:', returnWeibo(resp))
 })
 
+bot.onText(/\/chart/, (msg, match) => {
+    let preList = {}
+    let categoryList = []
+
+    channels.forEach(channel => {
+        if(!preList[channel.category])
+            preList[channel.category] = []
+
+        preList[channel.category].push(channel)
+    })
+
+    for (const category in preList) {
+        if (preList.hasOwnProperty(category)) {
+            categoryList.push({
+                text: category,
+                callback_data: JSON.stringify({
+                    type: 'category',
+                    data: category
+                })
+            })
+        }
+    }
+
+    bot.sendMessage(msg.chat.id, '请选择板块：', {
+        reply_markup: {
+            inline_keyboard: [
+                categoryList
+            ]
+        }
+    })
+})
+
+async function renderImage(channel) {
+    let ret = await query('SELECT time, count FROM news_stat WHERE channel = ' + mysql.escape(channel) )
+
+    let html = `
+    <html>
+        <body>
+            <canvas id="myChart"></canvas>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+            <script>
+                var ctx = document.getElementById('myChart')
+                var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            data: ${ JSON.stringify(ret) },
+                            xAxisID: 'time',
+                            yAxisID: 'count'
+                        }]
+                    }
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                type: 'time'
+                            }]
+                        },
+
+                    }
+                })
+            </script>
+        </body>
+    </html>
+    `
+    const page = await browser.newPage()
+    await page.goto(`data:text/html,${html}`)
+    const screenshot = await page.screenshot()
+    await page.close()
+
+    return screenshot
+}
+
+
+
+bot.on('callback_query', async query => {
+    if(query.message.date && query.data) {
+        let data
+        try {
+            data = JSON.parse(query.data)
+        } catch (err) {
+            return
+        }
+
+        if(data.type === 'category') {
+            // Then we display the channels
+            let preList = {}
+    
+            channels.forEach(channel => {
+                if(!preList[channel.category])
+                    preList[channel.category] = []
+        
+                preList[channel.category].push({
+                    text: channel.name,
+                    data: JSON.stringify({
+                        type: 'channel',
+                        data: channel.id
+                    })
+                })
+            })
+
+            // Valid, and edit the message
+            await bot.editMessageText('请选择频道：', {
+                message_id: query.message.message_id
+            })
+            await bot.editMessageReplyMarkup({
+                inline_keyboard: preList[data.data]
+            }, {
+                message_id: query.message.message_id
+            })
+
+        } else if(data.type === 'channel') {
+            // We display the chart
+            await bot.editMessageText('正在一台铁臂阿童木变身的服务器上生成图表，生成速度较慢，请耐心等待。', {
+                message_id: query.message.message_id
+            })
+            let screenshot = await renderImage(data.data)
+            bot.sendPhoto(query.chat.id, screenshot)
+        }
+        bot.answerCallbackQuery({
+            callback_query_id: query.id
+        })
+    }
+})
+
+
 bot.on('message', msg => {
     const chatId = msg.chat.id
     /* if(chatId != config.owner_id && chatId != config.exi_channel)
@@ -453,3 +581,22 @@ init()
 }, 30000)
 
 fetchLatest() */
+
+
+// https://stackoverflow.com/a/14032965
+function exitHandler(options, exitCode) {
+    browser.close()
+}
+
+//do something when app is closing
+process.on('exit', exitHandler.bind(null,{cleanup:true}));
+
+//catches ctrl+c event
+process.on('SIGINT', exitHandler.bind(null, {exit:true}));
+
+// catches "kill pid" (for example: nodemon restart)
+process.on('SIGUSR1', exitHandler.bind(null, {exit:true}));
+process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
+
+//catches uncaught exceptions
+process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
