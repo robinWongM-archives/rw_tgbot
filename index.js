@@ -506,7 +506,9 @@ bot.on('callback_query', async query => {
                 chat_id: query.message.chat.id
             })
             await bot.editMessageReplyMarkup({
-                inline_keyboard: preList[data.data]
+                inline_keyboard: [
+                    preList[data.data]
+                ]
             }, {
                 message_id: query.message.message_id,
                 chat_id: query.message.chat.id
