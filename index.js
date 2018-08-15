@@ -429,7 +429,7 @@ bot.onText(/\/chart/, (msg, match) => {
     })
 })
 
-async function renderImage(channel) {
+async function renderImage(channel, name) {
     let ret = await query('SELECT time, count FROM news_stat WHERE channel = ' + mysql.escape(channel) )
     ret = ret.map(item => {
         return {
@@ -448,7 +448,11 @@ async function renderImage(channel) {
                     type: 'line',
                     data: {
                         datasets: [{
-                            data: ${ JSON.stringify(ret) }
+                            data: ${ JSON.stringify(ret) },
+                            label: ${name},
+                            fill: false,
+                            borderColor: 'rgb(54, 162, 235)',
+                            backgroundColor: Chart.helpers.color('rgb(54, 162, 235)').alpha(0.5).rgbString()
                         }]
                     },
                     options: {
@@ -466,6 +470,11 @@ async function renderImage(channel) {
     `
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
+    await page.setViewport({
+        width: 1280,
+        height: 720,
+        deviceScaleFactor: 2
+    })
     await page.goto(`data:text/html,${html}`)
     const screenshot = await page.screenshot()
     await browser.close()
@@ -496,7 +505,10 @@ bot.on('callback_query', async query => {
                     text: channel.name,
                     callback_data: JSON.stringify({
                         type: 'channel',
-                        data: channel.id
+                        data: {
+                            id: channel.id,
+                            name: channel.name
+                        }
                     })
                 }])
             })
@@ -519,7 +531,7 @@ bot.on('callback_query', async query => {
                 message_id: query.message.message_id,
                 chat_id: query.message.chat.id
             })
-            let screenshot = await renderImage(data.data)
+            let screenshot = await renderImage(data.data.id, data.data.name)
             await bot.sendPhoto(query.message.chat.id, screenshot)
         }
         await bot.answerCallbackQuery({
