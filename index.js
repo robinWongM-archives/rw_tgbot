@@ -457,7 +457,10 @@ async function renderImage(channel, name='') {
                         responsive: true,
                         scales: {
                             xAxes: [{
-                                type: 'time'
+                                type: 'time',
+                                time: {
+                                    displayFormats: 'MMM D H:mm'
+                                }
                             }]
                         }
                     }
