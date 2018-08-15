@@ -431,7 +431,12 @@ bot.onText(/\/chart/, (msg, match) => {
 
 async function renderImage(channel) {
     let ret = await query('SELECT time, count FROM news_stat WHERE channel = ' + mysql.escape(channel) )
-
+    ret = ret.map(item => {
+        return {
+            x: item.time,
+            y: item.count
+        }
+    })
     let html = `
     <html>
         <body>
@@ -443,18 +448,16 @@ async function renderImage(channel) {
                     type: 'line',
                     data: {
                         datasets: [{
-                            data: ${ JSON.stringify(ret) },
-                            xAxisID: 'time',
-                            yAxisID: 'count'
+                            data: ${ JSON.stringify(ret) }
                         }]
-                    }
+                    },
                     options: {
+                        responsive: true,
                         scales: {
                             xAxes: [{
                                 type: 'time'
                             }]
-                        },
-
+                        }
                     }
                 })
             </script>
