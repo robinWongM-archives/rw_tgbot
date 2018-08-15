@@ -449,18 +449,18 @@ async function renderImage(channel, name='') {
                     data: {
                         datasets: [{
                             data: ${ JSON.stringify(ret) },
+                            label: '${channel}',
                             fill: false,
-                            borderColor: 'rgb(54, 162, 235)'
+                            borderColor: 'rgb(54, 162, 235)',
+                            backgroundColor: 'rgb(54, 162, 235)',
+                            steppedLine: true
                         }]
                     },
                     options: {
                         responsive: true,
                         scales: {
                             xAxes: [{
-                                type: 'time',
-                                time: {
-                                    displayFormats: 'MMM D H:mm'
-                                }
+                                type: 'time'
                             }]
                         }
                     }
