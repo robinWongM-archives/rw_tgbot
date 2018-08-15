@@ -412,21 +412,19 @@ bot.onText(/\/chart/, (msg, match) => {
 
     for (const category in preList) {
         if (preList.hasOwnProperty(category)) {
-            categoryList.push({
+            categoryList.push([{
                 text: category,
                 callback_data: JSON.stringify({
                     type: 'category',
                     data: category
                 })
-            })
+            }])
         }
     }
 
     bot.sendMessage(msg.chat.id, '请选择板块：', {
         reply_markup: {
-            inline_keyboard: [
-                categoryList
-            ]
+            inline_keyboard: categoryList
         }
     })
 })
@@ -491,13 +489,13 @@ bot.on('callback_query', async query => {
                 if(!preList[channel.category])
                     preList[channel.category] = []
         
-                preList[channel.category].push({
+                preList[channel.category].push([{
                     text: channel.name,
                     callback_data: JSON.stringify({
                         type: 'channel',
                         data: channel.id
                     })
-                })
+                }])
             })
 
             // Valid, and edit the message
@@ -506,9 +504,7 @@ bot.on('callback_query', async query => {
                 chat_id: query.message.chat.id
             })
             await bot.editMessageReplyMarkup({
-                inline_keyboard: [
-                    preList[data.data]
-                ]
+                inline_keyboard: preList[data.data]
             }, {
                 message_id: query.message.message_id,
                 chat_id: query.message.chat.id
