@@ -449,10 +449,8 @@ async function renderImage(channel, name='') {
                     data: {
                         datasets: [{
                             data: ${ JSON.stringify(ret) },
-                            label: ${name},
                             fill: false,
-                            borderColor: 'rgb(54, 162, 235)',
-                            backgroundColor: Chart.helpers.color('rgb(54, 162, 235)').alpha(0.5).rgbString()
+                            borderColor: 'rgb(54, 162, 235)'
                         }]
                     },
                     options: {
