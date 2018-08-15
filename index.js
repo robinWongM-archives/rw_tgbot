@@ -429,7 +429,7 @@ bot.onText(/\/chart/, (msg, match) => {
     })
 })
 
-async function renderImage(channel, name) {
+async function renderImage(channel, name='') {
     let ret = await query('SELECT time, count FROM news_stat WHERE channel = ' + mysql.escape(channel) )
     ret = ret.map(item => {
         return {
@@ -505,10 +505,7 @@ bot.on('callback_query', async query => {
                     text: channel.name,
                     callback_data: JSON.stringify({
                         type: 'channel',
-                        data: {
-                            id: channel.id,
-                            name: channel.name
-                        }
+                        data: channel.id
                     })
                 }])
             })
@@ -531,7 +528,7 @@ bot.on('callback_query', async query => {
                 message_id: query.message.message_id,
                 chat_id: query.message.chat.id
             })
-            let screenshot = await renderImage(data.data.id, data.data.name)
+            let screenshot = await renderImage(data.data)
             await bot.sendPhoto(query.message.chat.id, screenshot)
         }
         await bot.answerCallbackQuery({
