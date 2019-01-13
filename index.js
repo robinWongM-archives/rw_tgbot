@@ -3,7 +3,9 @@ const TelegramBot = require('node-telegram-bot-api'),
 
 const config = require('./config.js')
 const pWeiboCN = /weibo\.cn\/(?:status|detail)\/(\d+)/i
+const pWeiboCNNew = /weibo\.cn\/(?:\d+)\/(\d+)/i
 const pWeicoCC = /weico\.cc\/share\/(?:\d+)\.html\?weibo_id=(\d+)/i
+const pWeicoCCNew = /weico\.net\/share\/(?:\d+)\.html\?weibo_id=(\d+)/i
 const pWeiboCOM = /weibo\.com\/\d+\/(.+)/i
 
 const got = require('got'),
@@ -437,6 +439,10 @@ async function renderImage(channel, name='') {
             y: item.count
         }
     })
+    ret.push({
+        x: new Date(),
+        y: ret[ret.length - 1].y
+    })
     let html = `
     <html>
         <body>
@@ -555,7 +561,7 @@ bot.on('message', msg => {
     if(text) {
         // match weibo for text message
         console.log('message content:' + text)
-        let weiboCNRet = pWeiboCN.exec(text)
+        let weiboCNRet = pWeiboCN.exec(text) || pWeiboCNNew.exec(text)
         if(weiboCNRet) {
             console.log('matched message', weiboCNRet[1])
             let id = weiboCNRet[1]
@@ -568,7 +574,7 @@ bot.on('message', msg => {
                             })
         }
 
-        let weicoCCRet = pWeicoCC.exec(text)
+        let weicoCCRet = pWeicoCC.exec(text) || pWeicoCCNew.exec(text)
         if(weicoCCRet) {
             console.log('matched message', weicoCCRet[1])
             let id = weicoCCRet[1]
