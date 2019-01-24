@@ -126,7 +126,8 @@ async function init() {
         let nowTime = moment().tz('Asia/Shanghai')
         console.log('[' + nowTime.format('YYYY/MM/DD HH:mm:ss') + '] Running 速报')
 
-        if(nowTime.hour() != 2 && nowTime.hour() != 8 && nowTime.hour() != 14 && nowTime.hour() != 20)
+        if (nowTime.hour() != 22)
+        //if(nowTime.hour() != 2 && nowTime.hour() != 8 && nowTime.hour() != 14 && nowTime.hour() != 20)
             return
 
         console.log('[' + nowTime.format('YYYY/MM/DD HH:mm:ss') + '] Running 速报到点咗')
@@ -141,7 +142,7 @@ async function init() {
             preList[channel.category].push(channel)
         })
 
-        switch (nowTime.hour()) {
+        /* switch (nowTime.hour()) {
             case 2:
                 output = output + '#港股盘后报道'
                 break
@@ -156,12 +157,15 @@ async function init() {
                 break
             default:
                 output = output + '#港股测试报道'
-        }
+        } */
+        output = output + '#港股收市报道'
 
-        output = output + " *" + nowTime.subtract(6, 'hours').format('YYYY/MM/DD [HKT] HH:mm [-]') + ' ' +
-                          nowTime.add(6, 'hours').format('HH:mm')  + '*\n'
+        //output = output + " *" + nowTime.subtract(6, 'hours').format('YYYY/MM/DD [HKT] HH:mm [-]') + ' ' +
+        //                  nowTime.add(6, 'hours').format('HH:mm')  + '*\n'
+        output = output + " *" + nowTime.subtract(1, 'days').format('YYYY/MM/DD [HKT] HH:mm [-]') + ' ' +
+                          nowTime.add(1, 'days').format('YYYY/MM/DD [HKT] HH:mm')  + '*\n'
 
-        switch (nowTime.hour()) {
+        /* switch (nowTime.hour()) {
             case 2:
                 output = output + '截止市场夜宵时间，'
                 break
@@ -176,7 +180,8 @@ async function init() {
                 break
             default:
                 output = output + '截止本次抽风，'
-        }
+        } */
+        output = output + '截至市场收盘，'
 
         let allSum = {
             previous: 0,
@@ -195,7 +200,8 @@ async function init() {
                     const channel = list[i]
                     let ret = await query('SELECT count FROM news_stat ' +
                                           'WHERE channel = ' + mysql.escape(channel.id) + ' ' +
-                                          'AND time <= ' + mysql.escape(moment().subtract('6', 'hours').format("YYYY-MM-DD HH:mm:ss")) + 
+                                          'AND time <= ' + mysql.escape(moment().subtract('1', 'days').format("YYYY-MM-DD HH:mm:ss")) + 
+                                          // 'AND time <= ' + mysql.escape(moment().subtract('6', 'hours').format("YYYY-MM-DD HH:mm:ss")) + 
                                           'ORDER BY time DESC LIMIT 1')
                     if(ret.length <= 0) {
                         ret = await query('SELECT count FROM news_stat ' +
