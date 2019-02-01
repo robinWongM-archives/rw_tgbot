@@ -429,9 +429,8 @@ bot.onText(/\/getMonitor/, (msg, match) => {
 bot.onText(/\/setMonitor (.+)/, (msg, match) => {
     const chatId = msg.chat.id
     const resp = parseFloat(match[1])
-    console.log(match[1], resp)
 
-    if (isNaN(resp) || isFinite(resp)) {
+    if (isNaN(resp) || !isFinite(resp)) {
         bot.sendMessage(chatId, '您输入的参数不正确喔', {
             disable_notification: true
         })
