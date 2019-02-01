@@ -415,6 +415,16 @@ async function fetchLatest() {
     }
 }
 
+bot.onText(/\/time/, (msg, match) => {
+    const chatId = msg.chat.id
+    let nowTime = moment().tz('Asia/Shanghai')
+
+    bot.sendMessage(chatId, `Last updated: ${lastUpdateTime.format("YYYY-MM-DD HH:mm:ss")}\nLast updated diff hours: ${moment.duration(nowTime.diff(lastUpdateTime)).asHours()}`, {
+        disable_notification: true,
+        disable_web_page_preview: true
+    })
+})
+
 bot.onText(/\/weiboid (.+)/, (msg, match) => {
     const chatId = msg.chat.id
     const resp = match[1]
@@ -563,7 +573,6 @@ bot.on('callback_query', async query => {
         })
     }
 })
-
 
 bot.on('message', msg => {
     const chatId = msg.chat.id
