@@ -70,6 +70,13 @@ const token = config.bot_token;
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
 
+// Monitor channel update
+let lastUpdateTime = moment().tz('Asia/Shanghai')
+
+bot.on('channel_post', (msg) => {
+    lastUpdateTime = moment().tz('Asia/Shanghai')
+})
+
 let channels = []
 
 async function init() {
@@ -125,6 +132,14 @@ async function init() {
     let reportJob = schedule.scheduleJob('10 0 * * * *', async () => {
         let nowTime = moment().tz('Asia/Shanghai')
         console.log('[' + nowTime.format('YYYY/MM/DD HH:mm:ss') + '] Running 速报')
+
+        if(moment.duration(nowTime.diff(lastUpdateTime)).asHours() >= 12) {
+            bot.sendMessage(config.main_channel, '#WARNING *港闻频道已经超过 12 个小时没有更新，快滴 Check 一下啦*', {
+                parse_mode: 'Markdown',
+                disable_notification: true,
+                disable_web_page_preview: true
+            })
+        }
 
         if (nowTime.hour() != 22)
         //if(nowTime.hour() != 2 && nowTime.hour() != 8 && nowTime.hour() != 14 && nowTime.hour() != 20)
