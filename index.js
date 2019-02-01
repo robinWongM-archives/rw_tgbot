@@ -72,6 +72,7 @@ const bot = new TelegramBot(token, {polling: true});
 
 // Monitor channel update
 let lastUpdateTime = moment().tz('Asia/Shanghai')
+let monitorInterval = 12
 
 bot.on('channel_post', (msg) => {
     lastUpdateTime = moment().tz('Asia/Shanghai')
@@ -133,10 +134,11 @@ async function init() {
         let nowTime = moment().tz('Asia/Shanghai')
         console.log('[' + nowTime.format('YYYY/MM/DD HH:mm:ss') + '] Running 速报')
 
-        if(moment.duration(nowTime.diff(lastUpdateTime)).asHours() >= 12) {
-            bot.sendMessage(config.main_channel, '#WARNING *港闻频道已经超过 12 个小时没有更新，快滴 Check 一下啦*', {
+        let diffDuration = moment.duration(nowTime.diff(lastUpdateTime)).asHours()
+        if(diffDuration >= monitorInterval) {
+            bot.sendMessage(config.exi_channel, `#WARNING *某频道已经超过 ${Math.floor(diffDuration)} 个小时没有更新，快滴 Check 一下啦*`, {
                 parse_mode: 'Markdown',
-                disable_notification: true,
+                disable_notification: false,
                 disable_web_page_preview: true
             })
         }
@@ -415,11 +417,29 @@ async function fetchLatest() {
     }
 }
 
-bot.onText(/\/time/, (msg, match) => {
+bot.onText(/\/getMonitor/, (msg, match) => {
     const chatId = msg.chat.id
     let nowTime = moment().tz('Asia/Shanghai')
 
-    bot.sendMessage(chatId, `Last updated: ${lastUpdateTime.format("YYYY-MM-DD HH:mm:ss")}\nLast updated diff hours: ${moment.duration(nowTime.diff(lastUpdateTime)).asHours()}`, {
+    bot.sendMessage(chatId, `港闻频道崩溃监控：\n上次推文接收时间: ${lastUpdateTime.format("YYYY-MM-DD HH:mm:ss")}\n无响应小时数: ${moment.duration(nowTime.diff(lastUpdateTime)).asHours()}\n监控间隔：${monitorInterval} 小时`, {
+        disable_notification: true,
+        disable_web_page_preview: true
+    })
+})
+bot.onText(/\/setMonitor (.+)/, (msg, match) => {
+    const chatId = msg.chat.id
+    const resp = parseFloat(match[1])
+
+    if (isNaN(resp) || isFinite(resp)) {
+        bot.sendMessage(chatId, '您输入的参数不正确喔', {
+            disable_notification: true
+        })
+        return
+    }
+
+    monitorInterval = resp
+
+    bot.sendMessage(chatId, `设置成功。当频道持续 ${monitorInterval} 小时没有新的推文推送，将报警提示。`, {
         disable_notification: true,
         disable_web_page_preview: true
     })
