@@ -549,6 +549,8 @@ async function renderImage(channel, name='') {
         </body>
     </html>
     `
+    console.log('The output HTML was ', html)
+    
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     await page.setViewport({
