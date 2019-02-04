@@ -504,7 +504,7 @@ async function renderImage(channel, name='') {
             <script>
                 // var ctx = document.getElementById('myChart')
                 var chart = c3.generate({
-                    bindto: '#chart',
+                    bindto: '#myChart',
                     data: {
                         x: 'time',
                         columns: [
