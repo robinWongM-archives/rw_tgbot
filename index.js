@@ -445,6 +445,23 @@ bot.onText(/\/setMonitor (.+)/, (msg, match) => {
     })
 })
 
+let woshuo = 'cgjsafcvw;eoisguof'
+let nishuo = 'iwlahgfodugefr;vsh'
+
+bot.onText(/我说(.+)你说(.+)/, (msg, match) => {
+    if (match[1] && match[2]) {
+        woshuo = match[1].trim()
+        nishuo = match[2].trim()
+    }
+})
+bot.on('message', (msg) => {
+    if (typeof(msg.text) === 'string') {
+        if (msg.text.trim() === woshuo) {
+            bot.sendMessage(msg.chat.id, nishuo)
+        } 
+    }
+})
+
 bot.onText(/\/weiboid (.+)/, (msg, match) => {
     const chatId = msg.chat.id
     const resp = match[1]
@@ -502,30 +519,8 @@ async function renderImage(channel, name='') {
             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.12/c3.min.js"></script>
             <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>-->
             <script>
-                // var ctx = document.getElementById('myChart')
-                var chart = c3.generate({
-                    bindto: '#myChart',
-                    data: {
-                        x: 'time',
-                        xFormat: '%Y-%m-%dT%H:%M:%S+08:00',
-                        columns: [
-                            ['time', ${ ret.map((item) => '"' + moment(item.x).tz('Asia/Shanghai').format() + '"').join(', ') }],
-                            ['count', ${ ret.map((item) => item.y).join(', ') }]
-                        ],
-                        types: {
-                            count: 'area-step'
-                        }
-                    },
-                    axis: {
-                        time: {
-                            type: 'timeseries',
-                            tick: {
-                                format: '%Y-%m-%d'
-                            }
-                        }
-                    }
-                })
-                /* var chart = new Chart(ctx, {
+                var ctx = document.getElementById('myChart')
+                var chart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         datasets: [{
@@ -545,7 +540,7 @@ async function renderImage(channel, name='') {
                             }]
                         }
                     }
-                }) */
+                })
             </script>
         </body>
     </html>
@@ -556,7 +551,8 @@ async function renderImage(channel, name='') {
     const page = await browser.newPage()
     await page.setViewport({
         width: 1280,
-        height: 720
+        height: 720,
+        deviceScaleFactor: 2.0
     })
     await page.goto(`data:text/html,${html}`)
     const screenshot = await page.screenshot()
