@@ -508,7 +508,7 @@ async function renderImage(channel, name='') {
                     data: {
                         x: 'time',
                         columns: [
-                            ['time', ${ ret.map((item) => '"' + moment(item.x).tz('Asia/Shanghai').format() + '"').join(', ') }],
+                            ['time', ${ ret.map((item) => '"' + moment(item.x).tz('Asia/Shanghai').format('%Y-%m-%dT%H:%M:%S') + '"').join(', ') }],
                             ['count', ${ ret.map((item) => item.y).join(', ') }]
                         ],
                         types: {
@@ -519,7 +519,7 @@ async function renderImage(channel, name='') {
                         time: {
                             type: 'timeseries',
                             tick: {
-                                format: '%Y-%m-%dT%H:%M:%S+08:00'
+                                format: '%Y-%m-%dT%H:%M:%S'
                             }
                         }
                     }
