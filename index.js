@@ -507,8 +507,9 @@ async function renderImage(channel, name='') {
                     bindto: '#myChart',
                     data: {
                         x: 'time',
+                        xFormat: '%Y-%m-%dT%H:%M:%S+08:00',
                         columns: [
-                            ['time', ${ ret.map((item) => '"' + moment(item.x).tz('Asia/Shanghai').format('%Y-%m-%dT%H:%M:%S') + '"').join(', ') }],
+                            ['time', ${ ret.map((item) => '"' + moment(item.x).tz('Asia/Shanghai').format() + '"').join(', ') }],
                             ['count', ${ ret.map((item) => item.y).join(', ') }]
                         ],
                         types: {
@@ -519,7 +520,7 @@ async function renderImage(channel, name='') {
                         time: {
                             type: 'timeseries',
                             tick: {
-                                format: '%Y-%m-%dT%H:%M:%S'
+                                format: '%Y-%m-%d'
                             }
                         }
                     }
@@ -550,7 +551,7 @@ async function renderImage(channel, name='') {
     </html>
     `
     console.log('The output HTML was ', html)
-    
+
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     await page.setViewport({
