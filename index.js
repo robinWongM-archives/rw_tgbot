@@ -497,11 +497,34 @@ async function renderImage(channel, name='') {
     let html = `
     <html>
         <body>
-            <canvas id="myChart"></canvas>
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+            <div id="myChart"></div>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.8.0/d3.min.js"></script>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.12/c3.min.js"></script>
+            <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>-->
             <script>
-                var ctx = document.getElementById('myChart')
-                var chart = new Chart(ctx, {
+                // var ctx = document.getElementById('myChart')
+                var chart = c3.generate({
+                    bindto: '#chart',
+                    data: {
+                        x: 'time',
+                        columns: [
+                            ['time', ${ ret.map((item) => '"' + moment(item.x).tz('Asia/Shanghai').format() + '"').join(', ') }],
+                            ['count', ${ ret.map((item) => item.y).join(', ') }]
+                        ],
+                        types: {
+                            count: 'area-step'
+                        }
+                    },
+                    axis: {
+                        time: {
+                            type: 'timeseries',
+                            tick: {
+                                format: '%Y-%m-%dT%H:%M:%S+08:00'
+                            }
+                        }
+                    }
+                })
+                /* var chart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         datasets: [{
@@ -521,7 +544,7 @@ async function renderImage(channel, name='') {
                             }]
                         }
                     }
-                })
+                }) */
             </script>
         </body>
     </html>
@@ -581,12 +604,14 @@ bot.on('callback_query', async query => {
 
         } else if(data.type === 'channel') {
             // We display the chart
-            await bot.editMessageText('正在一台铁臂阿童木变身的服务器上生成图表，生成速度较慢，请耐心等待。', {
+            await bot.editMessageText('正在生成图表，请耐心等待。', {
                 message_id: query.message.message_id,
                 chat_id: query.message.chat.id
             })
             let screenshot = await renderImage(data.data)
-            await bot.sendPhoto(query.message.chat.id, screenshot)
+            await bot.sendPhoto(query.message.chat.id, screenshot, {
+                filename: 'chart.png'
+            })
         }
         await bot.answerCallbackQuery({
             callback_query_id: query.id
