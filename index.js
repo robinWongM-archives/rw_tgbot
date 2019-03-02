@@ -446,7 +446,7 @@ bot.onText(/\/setMonitor (.+)/, (msg, match) => {
 })
 
 bot.onText(/\/echo (.+)/, (msg, match) => {
-    bot.sendMessage(msg.chat.id, match, {
+    bot.sendMessage(msg.chat.id, match[1], {
         parse_mode: 'Markdown'
     })
 })
