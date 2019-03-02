@@ -445,6 +445,12 @@ bot.onText(/\/setMonitor (.+)/, (msg, match) => {
     })
 })
 
+bot.onText(/\/echo (.+)/, (msg, match) => {
+    bot.sendMessage(msg.chat.id, match, {
+        parse_mode: 'Markdown'
+    })
+})
+
 let woshuo = 'cgjsafcvw;eoisguof'
 let nishuo = 'iwlahgfodugefr;vsh'
 
@@ -513,10 +519,13 @@ async function renderImage(channel, name='') {
     })
     let html = `
     <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+
         <body>
             <div id="myChart"></div>
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.8.0/d3.min.js"></script>
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.12/c3.min.js"></script>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts.min.js"></script>
             <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>-->
             <script>
                 var ctx = document.getElementById('myChart')
