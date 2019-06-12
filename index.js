@@ -681,7 +681,7 @@ init()
 
 const app = express()
 
-app.get('/:channelID', (req, res) => {
+app.get('/:channelID', async (req, res) => {
     let ret = await query('SELECT time, count FROM news_stat WHERE channel = ' + mysql.escape(req.params.channelID) )
     ret = ret.map(item => {
         return {
