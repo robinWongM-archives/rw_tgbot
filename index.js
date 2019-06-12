@@ -612,15 +612,28 @@ bot.on('callback_query', async query => {
 
         } else if(data.type === 'channel') {
             // We display the chart
-            await bot.editMessageText('正在生成图表，请耐心等待。', {
+            await bot.editMessageText(`@${data.data} 的图表生成完成。\n点击下方按钮查看 ↓`, {
                 message_id: query.message.message_id,
                 chat_id: query.message.chat.id
             })
+            await bot.editMessageReplyMarkup({
+                inline_keyboard: [
+                    [
+                        {
+                            text: '查看图表',
+                            url: `https://service.rwong.cc/tg_bot_chart/detail/?channel=${data.data}`,
+                        },
+                    ]
+                ],
+            }, {
+                message_id: query.message.message_id,
+                chat_id: query.message.chat.id,
+            })
             console.log(`Generate id FOR ${data.data}`)
-            let screenshot = await renderImage(data.data)
+            /* let screenshot = await renderImage(data.data)
             await bot.sendPhoto(query.message.chat.id, screenshot, {
                 filename: 'chart.png'
-            })
+            }) */
         }
         await bot.answerCallbackQuery({
             callback_query_id: query.id
@@ -680,6 +693,8 @@ bot.on('polling_error', error => {
 init()
 
 const app = express()
+
+app.use('/detail',express.static('news-media/dist'))
 
 app.get('/:channelID', async (req, res) => {
     let ret = await query('SELECT time, count FROM news_stat WHERE channel = ' + mysql.escape(req.params.channelID) )
