@@ -23,6 +23,8 @@ const schedule = require('node-schedule'),
 
 const puppeteer = require('puppeteer')
 
+const express = require('express')
+
 const query = function( sql, values ) {
     // 返回一个 Promise
     return new Promise(( resolve, reject ) => {
@@ -554,8 +556,6 @@ async function renderImage(channel, name='') {
         </body>
     </html>
     `
-    console.log('The output HTML was ', html)
-
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     await page.setViewport({
@@ -616,6 +616,7 @@ bot.on('callback_query', async query => {
                 message_id: query.message.message_id,
                 chat_id: query.message.chat.id
             })
+            console.log(`Generate id FOR ${data.data}`)
             let screenshot = await renderImage(data.data)
             await bot.sendPhoto(query.message.chat.id, screenshot, {
                 filename: 'chart.png'
@@ -677,6 +678,25 @@ bot.on('polling_error', error => {
 })
 
 init()
+
+const app = express()
+
+app.get('/:channelID', (req, res) => {
+    let ret = await query('SELECT time, count FROM news_stat WHERE channel = ' + mysql.escape(req.params.channelID) )
+    ret = ret.map(item => {
+        return {
+            x: item.time,
+            y: item.count
+        }
+    })
+    ret.push({
+        x: new Date(),
+        y: ret[ret.length - 1].y
+    })
+    res.send(ret)
+})
+
+app.listen(12345)
 
 /* setInterval(() => {
     fetchLatest()

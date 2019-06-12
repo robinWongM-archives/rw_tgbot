@@ -8,6 +8,7 @@
   "private": true,
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "express": "^4.17.1",
     "got": "^9.0.0",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
